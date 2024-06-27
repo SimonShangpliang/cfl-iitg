@@ -1,0 +1,30 @@
+<% if(errMessage) {%>
+<div class="alert alert-danger" role="alert"><%= errMessage %></div>
+<% } %>
+
+<table class="table table-dark">
+  <thead>
+    <tr>
+      <th scope="col">Image</th>
+      <th scope="col">Name</th>
+      <th scope="col">Author</th>
+      <th scope="col">Description</th>
+      <th scope="col">Quantity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% books.forEach(book=>{ %>
+    <tr>
+      <td>
+        <a href="/bookDetails/<%= book._id %>" class="btn btn-warning">
+          <img style="max-width: 105px" src="<%= book.imagesUrl[0] %>" />
+        </a>
+      </td>
+      <td><%= book.name %></td>
+      <td><%= book.author %></td>
+      <td><%= book.desc %></td>
+      <td scope="col"><%= book.quantity %></td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>

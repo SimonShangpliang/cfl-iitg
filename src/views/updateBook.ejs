@@ -1,0 +1,53 @@
+<form action="/updateBook/<%=book._id%>" method="post">
+  <div class="mb-3">
+    <label for="name" class="form-label">Book Name</label>
+    <input
+      type="text"
+      class="form-control"
+      id="name"
+      name="name"
+      value="<%=book.name%>"
+      required
+    />
+  </div>
+  <div class="mb-3">
+    <label for="author" class="form-label">Author</label>
+    <input
+      type="text"
+      class="form-control"
+      id="author"
+      name="author"
+      value="<%=book.author%>"
+      required
+    />
+  </div>
+  <div class="mb-3">
+    <label for="contributor" class="form-label">contributor</label>
+    <input
+      type="text"
+      class="form-control"
+      id="contributor"
+      name="contributor"
+      value="<%=book.contributor%>"
+      required
+    />
+  </div>
+  <div class="mb-3">
+    <label for="desc" class="form-label">Book Description</label>
+    <textarea class="form-control" id="desc" name="desc" rows="3" required>
+    <%=book.desc%>
+    </textarea>
+  </div>
+  <div class="mb-3">
+    <label for="quantity" class="form-label">Quantity</label>
+    <input
+      type="number"
+      class="form-control"
+      id="quantity"
+      name="quantity"
+      value="<%=book.quantity%>"
+      step="0.01"
+    />
+  </div>
+  <button type="submit" class="btn btn-primary">Update Book</button>
+</form>
