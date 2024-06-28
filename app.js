@@ -3,7 +3,6 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import expressEjsLayouts from "express-ejs-layouts";
 import path from "path";
-// import dotenv from "dotenv";
 import jwtAuth from "./src/middlewares/jwtAuth.middleware.js";
 import UserController from "./src/features/user/user.controller.js";
 import BookController from "./src/features/books/book.controller.js";
