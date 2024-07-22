@@ -49,7 +49,7 @@
     <p><%=book.desc%></p>
     <a class="btn btn-secondary">Qty: <%= book.quantity%></a>
     <a href="/issueBook/<%= book._id %>" class="btn btn-primary"> Issue </a>
-    <% if(userName==book.contributor){ %>
+    <% if(locals.userEmail=="lalhriemsangfaihriemsang@gmail.com"){ %>
     <a href="/updateBook/<%= book._id %>" class="btn btn-warning"> Update </a>
     <a href="/deleteBook/<%= book._id %>" class="btn btn-danger"> Delete </a>
     <% } %>
