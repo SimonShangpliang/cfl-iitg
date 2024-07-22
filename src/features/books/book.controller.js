@@ -1,5 +1,23 @@
+import {
+  DeleteObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 import BookModel from "./book.model.js";
 import BooksRepository from "./book.repository.js";
+
+const bucketName = process.env.BUCKET_NAME;
+const bucketRegion = process.env.BUCKET_REGION;
+const accessKey = process.env.ACCESS_KEY;
+const secretAccessKey = process.env.SECRET_ACCESS_KEY;
+
+const s3 = new S3Client({
+  credentials: {
+    accessKeyId: accessKey,
+    secretAccessKey: secretAccessKey,
+  },
+  region: bucketRegion,
+});
 
 export default class BookController {
   constructor() {
@@ -83,9 +101,13 @@ export default class BookController {
   async addBook(req, res) {
     const { name, author, contributor, desc, quantity } = req.body;
     const bookId = author + "-" + name;
-    const imagesUrl = req.files.map((file) => {
-      return "/images/" + file.filename;
+    const uniqueKeys = req.files.map((file) => {
+      return file.originalname;
     });
+    const imagesUrl = uniqueKeys.map((uniqueKey) => {
+      return `https://${bucketName}.s3.${bucketRegion}.amazonaws.com/${uniqueKey}`;
+    });
+
     const bookFound = await this.bookRepository.findBook(bookId);
     if (!bookFound) {
       try {
@@ -95,9 +117,24 @@ export default class BookController {
           contributor,
           desc,
           quantity,
-          imagesUrl
+          imagesUrl,
+          uniqueKeys
         );
         book.requests = [];
+
+        req.files.map(async (file, index) => {
+          const params = {
+            Bucket: bucketName,
+            Key: uniqueKeys[index],
+            Body: file.buffer,
+            ContentType: file.mimetype,
+          };
+
+          const command = new PutObjectCommand(params);
+
+          await s3.send(command);
+        });
+        console.log(imagesUrl);
         await this.bookRepository.addBook(book);
       } catch (err) {
         return res.status(400).render("books", {
@@ -106,17 +143,6 @@ export default class BookController {
           userEmail: req.session.userEmail,
         });
       }
-    } else {
-      name != bookFound.name ? bookFound.name : name;
-      author != bookFound.author ? bookFound.author : author;
-      desc != bookFound.desc ? bookFound.desc : desc;
-      contributor != bookFound.contributor
-        ? bookFound.contributor
-        : contributor;
-      quantity != bookFound.quantity ? bookFound.quantity : quantity;
-      imagesUrl != bookFound.imagesUrl ? bookFound.imagesUrl : quantity;
-      bookFound.quantity = parseInt(bookFound.quantity) + parseInt(quantity);
-      await this.bookRepository.updateBook(bookFound);
     }
 
     return await this.getAll(req, res);
@@ -167,7 +193,29 @@ export default class BookController {
   }
   async deleteBook(req, res) {
     const bookId = req.params.bookId;
+    const book = await this.bookRepository.findBook(bookId);
+
+    if (!book)
+      return res.render("bookDetails", {
+        errMessage: "Book not found",
+        book,
+        userEmail: req.session.userEmail,
+        userName: req.userName,
+      });
+
     try {
+      const uniqueKeys = book.uniqueKeys;
+
+      uniqueKeys.map(async (uniqueKey) => {
+        const params = {
+          Bucket: bucketName,
+          Key: uniqueKey,
+        };
+
+        const command = new DeleteObjectCommand(params);
+
+        await s3.send(command);
+      });
       await this.bookRepository.deleteBook(bookId);
       const books = await this.bookRepository.getAllBooks();
       res.render("books", {
@@ -176,7 +224,6 @@ export default class BookController {
         userEmail: req.session.userEmail,
       });
     } catch (err) {
-      const book = await this.bookRepository.findBook(bookId);
       res.render("bookDetails", {
         errMessage: err,
         book,

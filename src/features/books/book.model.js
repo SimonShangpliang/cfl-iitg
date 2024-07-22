@@ -1,5 +1,5 @@
 export default class BookModel {
-  constructor(name, author, contributor, desc, qty, imagesUrl) {
+  constructor(name, author, contributor, desc, qty, imagesUrl, uniqueKeys) {
     this._id = author + "-" + name;
     this.author = author;
     this.name = name;
@@ -7,5 +7,6 @@ export default class BookModel {
     this.desc = desc;
     this.quantity = qty;
     this.imagesUrl = imagesUrl;
+    this.uniqueKeys = uniqueKeys;
   }
 }

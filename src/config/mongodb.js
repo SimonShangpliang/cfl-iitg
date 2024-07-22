@@ -4,7 +4,8 @@ import { MongoClient } from "mongodb";
 // const defaultURL = "mongodb://localhost:27017/Christians-IITG-Books";
 //  "mongodb+srv://lalhriemsang:lal%40123%23777@cluster0.7ik7jus.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
-const url = process.env.MONGO_URL;
+const url =
+  process.env.MONGO_URL || "mongodb://localhost:27017/Christians-IITG-Books";
 let client;
 export const connectToMongoDB = () => {
   MongoClient.connect(url)

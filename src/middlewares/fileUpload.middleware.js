@@ -1,17 +1,17 @@
-import multer from "multer";
+import multer, { memoryStorage } from "multer";
 
-const storageConfig = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/images/");
-  },
-  filename: (req, file, cb) => {
-    const name = Date.now() + "-" + file.originalname;
-    cb(null, name);
-  },
-});
+// const storageConfig = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "public/images/");
+//   },
+//   filename: (req, file, cb) => {
+//     const name = Date.now() + "-" + file.originalname;
+//     cb(null, name);
+//   },
+// });
 
 export const uploadFiles = multer({
-  storage: storageConfig,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 10 * 1024 * 1024 },
 });
 

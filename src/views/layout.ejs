@@ -45,12 +45,15 @@
                 >Products</a
               >
             </li>
+
+            <% if(locals.userEmail=="lalhriemsangfaihriemsang@gmail.com") {%>
             <li class="nav-item">
               <a class="nav-link active" aria-current="page" href="/new"
                 >New Products</a
               >
             </li>
-
+            <% } %>
+            <!--  -->
             <% if(locals.userEmail) { %>
             <li class="nav-item">
               <a class="nav-link active" aria-current="page" href="/logout"
