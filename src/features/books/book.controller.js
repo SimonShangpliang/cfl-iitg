@@ -120,7 +120,7 @@ export default class BookController {
           imagesUrl,
           uniqueKeys
         );
-        book.requests = [];
+        // book.requests=[]
 
         req.files.map(async (file, index) => {
           const params = {

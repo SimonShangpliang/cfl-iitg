@@ -8,5 +8,6 @@ export default class BookModel {
     this.quantity = qty;
     this.imagesUrl = imagesUrl;
     this.uniqueKeys = uniqueKeys;
+    this.requests = [];
   }
 }
