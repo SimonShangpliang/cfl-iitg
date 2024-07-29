@@ -4,18 +4,20 @@
 
 <div class="container-fluid d-flex flex-wrap justify-content-evenly">
   <% books.forEach(book=>{ %>
-  <a href="/bookDetails/<%= book._id %>" class="btn btn-warning">
-    <img style="max-width: 105px" src="<%= book.imagesUrl[0] %>" />
-  </a>
-  <div class="card-body">
-    <h5 class="card-title">
-      <%= book.name %> <br />
-      by <%= book.author %>
-    </h5>
-    <div class="card-text">
-      <span class="grey">Qty:<%=book.quantity%></span>
-      <br />
-      <%=book.desc%>
+  <div class="card-body mb-2 me-2" style="width: 18rem">
+    <a href="/bookDetails/<%= book._id %>" class="btn btn-warning">
+      <img style="max-width: 105px" src="<%= book.imagesUrl[0] %>" />
+    </a>
+    <div class="card-body">
+      <h5 class="card-title">
+        <%= book.name %> <br />
+        by <%= book.author %>
+      </h5>
+      <div class="card-text">
+        <span class="grey">Qty:<%=book.quantity%></span>
+        <br />
+        <%=book.desc%>
+      </div>
     </div>
   </div>
   <% }) %>
