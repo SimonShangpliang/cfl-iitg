@@ -69,6 +69,7 @@ export default class BookController {
             book.requests.splice(index - r, 1);
             r++;
           });
+          book.quantity += r;
         }
         await this.bookRepository.updateBook(book);
         res.status(200).render("bookDetails", {
