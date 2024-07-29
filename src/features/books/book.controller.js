@@ -63,7 +63,7 @@ export default class BookController {
             );
             if (r.daysLeft <= 0) removeIndexes.push(index);
           });
-
+          removeIndexes.sort((a, b) => b - a);
           let r = 0;
           removeIndexes.forEach((index) => {
             book.requests.splice(index - r, 1);
