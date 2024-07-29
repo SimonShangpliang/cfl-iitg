@@ -191,6 +191,7 @@ export default class BookController {
       userName: req.userName,
     });
   }
+
   async deleteBook(req, res) {
     const bookId = req.params.bookId;
     const book = await this.bookRepository.findBook(bookId);
