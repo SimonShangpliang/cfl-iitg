@@ -50,6 +50,7 @@ export default class UserController {
           .cookie("jwtToken", token, { maxAge: 360000, httpOnly: false });
 
         req.session.userEmail = result.email;
+        req.session.userName = result.name;
         const booksRepository = new BooksRepository();
         const books = await booksRepository.getAllBooks();
         if (books) {

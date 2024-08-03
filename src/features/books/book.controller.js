@@ -76,7 +76,7 @@ export default class BookController {
           errMessage: null,
           book,
           userEmail: req.session.userEmail,
-          userName: req.userName,
+          userName: req.session.userName,
         });
       } else
         res.status(400).render("books", {
@@ -158,7 +158,7 @@ export default class BookController {
         errMessage: "Book not found",
         book: null,
         userEmail: req.session.userEmail,
-        userName: req.userName,
+        userName: req.session.userName,
       });
     res
       .status(200)
@@ -175,7 +175,7 @@ export default class BookController {
         errMessage: "Book not found for updatetion",
         book: null,
         userEmail: req.session.userEmail,
-        userName: req.userName,
+        userName: req.session.userName,
       });
     }
     if (name) bookFound.name = name;
@@ -189,7 +189,7 @@ export default class BookController {
       errMessage: null,
       book: bookFound,
       userEmail: req.session.userEmail,
-      userName: req.userName,
+      userName: req.session.userName,
     });
   }
 
@@ -202,7 +202,7 @@ export default class BookController {
         errMessage: "Book not found",
         book,
         userEmail: req.session.userEmail,
-        userName: req.userName,
+        userName: req.session.userName,
       });
 
     try {
@@ -230,7 +230,7 @@ export default class BookController {
         errMessage: err,
         book,
         userEmail: req.session.userEmail,
-        userName: req.userName,
+        userName: req.session.userName,
       });
     }
   }
@@ -252,7 +252,7 @@ export default class BookController {
         errMessage: null,
         book,
         userEmail: req.session.userEmail,
-        userName: req.userName,
+        userName: req.session.userName,
       });
     }
 
@@ -261,7 +261,7 @@ export default class BookController {
         errMessage: "Sorry all books are currenly issued",
         book,
         userEmail: req.session.userEmail,
-        userName: req.userName,
+        userName: req.session.userName,
       });
 
     book.quantity = parseInt(book.quantity) - 1;
@@ -276,7 +276,7 @@ export default class BookController {
       errMessage: null,
       book,
       userEmail: req.session.userEmail,
-      userName: req.userName,
+      userName: req.session.userName,
     });
   }
 }
