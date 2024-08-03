@@ -49,9 +49,9 @@
     <p><%=book.desc%></p>
     <a class="btn btn-secondary">Qty: <%= book.quantity%></a>
     <% if(book.requests && book.requests.includes(locals.userName)) {%>
-    <a href="/issueBook/<%= book._id %>" class="btn btn-danger"> UnIssue </a>
+    <a href="/issueBook/<%= book._id %>" class="btn btn-danger"> Pull back </a>
     <%} else{ %>
-    <a href="/issueBook/<%= book._id %>" class="btn btn-primary"> Issue </a>
+    <a href="/issueBook/<%= book._id %>" class="btn btn-primary"> Request </a>
     <% } %>
     <!--  -->
     <% if(locals.userEmail=="lalhriemsangfaihriemsang@gmail.com"){ %>
