@@ -51,7 +51,9 @@
     <% if(book.requests && book.requests.includes(locals.userName)) {%>
     <a href="/issueBook/<%= book._id %>" class="btn btn-danger"> Pull back </a>
     <%} else{ %>
-    <a href="/issueBook/<%= book._id %>" class="btn btn-primary"> Request </a>
+    <a href="/issueBook/<%= book._id %>" class="btn btn-primary">
+      Request <%= locals.userName %></a
+    >
     <% } %>
     <!--  -->
     <% if(locals.userEmail=="lalhriemsangfaihriemsang@gmail.com"){ %>
