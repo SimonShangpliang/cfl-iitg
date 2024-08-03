@@ -51,9 +51,9 @@
 
     <a
       href="/issueBook/<%= book._id %>"
-      class="btn btn-<%= book.requests.includes(locals.userName) ? 'danger' : 'primary' %>"
+      class="btn btn-<%= requested ? 'danger' : 'primary' %>"
     >
-      Request
+      <%= requested?'PullBack':'Request' %>
     </a>
     <!--  -->
     <% if(locals.userEmail=="lalhriemsangfaihriemsang@gmail.com"){ %>
