@@ -72,9 +72,7 @@ export default class BookController {
           book.quantity += r;
         }
         await this.bookRepository.updateBook(book);
-        const requested = !(
-          book.requests.length && !book.requests.includes(req.session.userName)
-        );
+        const requested = book.requests.includes(req.session.userName);
 
         res.status(200).render("bookDetails", {
           errMessage: null,
@@ -189,9 +187,8 @@ export default class BookController {
     if (quantity) bookFound.quantity = quantity;
 
     await this.bookRepository.updateBook(bookFound);
-    const requested = !(
-      book.requests.length && !book.requests.includes(req.session.userName)
-    );
+    const requested = book.requests.includes(req.session.userName);
+
     res.render("bookDetails", {
       errMessage: null,
       book: bookFound,
@@ -233,9 +230,8 @@ export default class BookController {
         userEmail: req.session.userEmail,
       });
     } catch (err) {
-      const requested = !(
-        book.requests.length && !book.requests.includes(req.session.userName)
-      );
+      const requested = book && book.requests.includes(req.session.userName);
+
       res.render("bookDetails", {
         errMessage: err,
         book,
