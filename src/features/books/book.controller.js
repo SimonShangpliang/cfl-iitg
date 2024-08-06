@@ -69,10 +69,13 @@ export default class BookController {
             book.requests.splice(index - r, 1);
             r++;
           });
-          book.quantity += r;
+          book.quantity = Number(book.quantity) + r;
         }
         await this.bookRepository.updateBook(book);
-        const requested = book.requests.includes(req.session.userName);
+
+        const requested = book.requests.some(
+          (request) => request.name === req.session.userName
+        );
 
         res.status(200).render("bookDetails", {
           errMessage: null,
@@ -119,11 +122,10 @@ export default class BookController {
           author,
           contributor,
           desc,
-          quantity,
+          Number(quantity),
           imagesUrl,
           uniqueKeys
         );
-        // book.requests=[]
 
         req.files.map(async (file, index) => {
           const params = {
@@ -187,7 +189,9 @@ export default class BookController {
     if (quantity) bookFound.quantity = quantity;
 
     await this.bookRepository.updateBook(bookFound);
-    const requested = book.requests.includes(req.session.userName);
+    const requested = bookFound.requests.some(
+      (request) => request.name === req.session.userName
+    );
 
     res.render("bookDetails", {
       errMessage: null,
@@ -230,7 +234,9 @@ export default class BookController {
         userEmail: req.session.userEmail,
       });
     } catch (err) {
-      const requested = book && book.requests.includes(req.session.userName);
+      const requested =
+        book &&
+        book.requests.some((request) => request.name === req.session.userName);
 
       res.render("bookDetails", {
         errMessage: err,
