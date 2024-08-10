@@ -1,3 +1,8 @@
+<div class="mb-4" style="padding-top: 1rem;">
+  <input type="text" id="searchInput" class="form-control" placeholder="Search by book name or author" aria-label="Search">
+</div>
+<p id="noBooksMessage" style="display: none;">No books found matching your search criteria.</p>
+
 <% if(errMessage) {%>
 <div class="alert alert-danger" role="alert"><%= errMessage %></div>
 <% } %>

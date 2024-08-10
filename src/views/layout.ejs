@@ -69,14 +69,57 @@
                 >Login</a
               >
             </li>
+
             <% } %>
           </ul>
         </div>
       </div>
     </nav>
+    
     <div class="container">
       <!-- Place holder for other ejs views -->
+       
+     
       <%-body %>
+
     </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const bookCards = document.querySelectorAll('.card-body');
+    
+        function updateBookVisibility() {
+          const query = searchInput.value.toLowerCase();
+          let visibleCount = 0;
+    
+          bookCards.forEach(card => {
+            const title = card.querySelector('.card-title').innerText.toLowerCase();
+            const description = card.querySelector('.card-text').innerText.toLowerCase();
+    
+            if (title.includes(query) || description.includes(query)) {
+              card.parentElement.style.display = ''; // Show the card
+              visibleCount++;
+            } else {
+              card.parentElement.style.display = 'none'; // Hide the card
+            }
+          });
+    
+          // Display a message if no books are found
+          const noBooksMessage = document.getElementById('noBooksMessage');
+          if (visibleCount === 0) {
+            noBooksMessage.style.display = 'block';
+          } else {
+            noBooksMessage.style.display = 'none';
+          }
+        }
+    
+        searchInput.addEventListener('input', updateBookVisibility);
+        
+        // Initialize the visibility on page load
+        updateBookVisibility();
+      });
+    </script>
+    
   </body>
 </html>
