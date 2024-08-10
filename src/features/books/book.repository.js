@@ -20,6 +20,38 @@ export default class BooksRepository {
       return err;
     }
   }
+  async updateRequestStatus(bookId, requestName, isAccepted) {
+    try {
+      console.log(bookId, requestName, isAccepted)
+      const db = getDB();
+      const collection = db.collection("books");
+
+      // Update the `isAccepted` field of the specific request
+      if (isAccepted) {
+        // If accepted, update the request status
+        await collection.updateOne(
+          { _id: bookId, "requests.name": requestName },
+          { 
+            $set: { 
+              "requests.$.isAccepted": isAccepted 
+            }
+          }
+        );
+      } else {
+        // If rejected, remove the request
+        await collection.updateOne(
+          { _id: bookId },
+          { 
+            $pull: { 
+              requests: { name: requestName } 
+            }
+          }
+        );
+      }
+    } catch (err) {
+      return err;
+    }
+  }
 
   async findBook(bookId) {
     try {

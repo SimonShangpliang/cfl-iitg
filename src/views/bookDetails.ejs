@@ -62,10 +62,48 @@
     <% } %>
     <!--  -->
     <% if(book.requests){ %> <% book.requests.forEach(request=>{ %>
-    <div class="alert alert-primary" role="alert">
-      Issued by <%=request.name%>, to be returned on <%= request.daysLeft %>
-      days
-    </div>
+      <% if(locals.userEmail=="lalhriemsangfaihriemsang@gmail.com"){ %>
+
+      <div class="alert <%= request.isAccepted ? 'alert-success' : 'alert-primary' %>" role="alert">
+        Issued by <%= request.name %>, to be returned on <%= request.daysLeft %> days
+        <div class="mt-2">
+          <% if (request.isAccepted) { %>
+            <!-- <span class="btn btn-success" style="pointer-events: none; opacity: 0.6;">Accepted</span> -->
+
+            <a href="/update-request-status?bookId=<%= book._id %>&requestName=<%= request.name %>&isAccepted=false" 
+               class="btn btn-danger">
+              Returned
+            </a>
+          <% } else { %>
+
+            <a href="/update-request-status?bookId=<%= book._id %>&requestName=<%= request.name %>&isAccepted=true" 
+               class="btn btn-success">
+              Accept
+            </a>
+            <a href="/update-request-status?bookId=<%= book._id %>&requestName=<%= request.name %>&isAccepted=false" 
+               class="btn btn-danger">
+              Reject
+            </a>
+          <% } %>
+        </div>      </div>
+      <% } %>
+      <% if(locals.userEmail!="lalhriemsangfaihriemsang@gmail.com"){ %>
+
+        <div class="alert <%= request.isAccepted ? 'alert-success' : 'alert-primary' %>" role="alert">
+          Issued by <%= request.name %>, to be returned on <%= request.daysLeft %> days
+          <div class="mt-2">
+            <% if (request.isAccepted) { %>
+              <!-- <span class="btn btn-success" style="pointer-events: none; opacity: 0.6;">Accepted</span> -->
+              <span class="btn btn-success" style="pointer-events: none; opacity: 0.6;">Accepted</span>
+  
+          
+            <% } else { %>
+              <span class="btn btn-warning" style="pointer-events: none; opacity: 0.6;">Waiting to be Accepted</span>
+
+            <% } %>
+</div>
+        </div>
+        <% } %>
     <% })%> <% }%>
   </div>
 </div>

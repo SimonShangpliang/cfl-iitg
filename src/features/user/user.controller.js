@@ -18,6 +18,7 @@ export default class UserController {
   async signUp(req, res) {
     // console.log(req.body);
     const { name, email, password } = req.body;
+    console.log(req.body)
     try {
       const user = new UserModel(name, email, password);
       await this.userRepository.SignUp(user);

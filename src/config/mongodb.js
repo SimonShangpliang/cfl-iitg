@@ -1,14 +1,14 @@
 // import dotenv from "dotenv";
 // dotenv.config();
 import { MongoClient } from "mongodb";
-// const defaultURL = "mongodb://localhost:27017/Christians-IITG-Books";
-//  "mongodb+srv://lalhriemsang:lal%40123%23777@cluster0.7ik7jus.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const defaultURL = 
+ "mongodb+srv://lalhriemsang:lal%40123%23777@cluster0.7ik7jus.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
-const url =
-  process.env.MONGO_URL || "mongodb://localhost:27017/Christians-IITG-Books";
+// const url =
+//   process.env.MONGO_URL || "mongodb://localhost:27017/Christians-IITG-Books";
 let client;
 export const connectToMongoDB = () => {
-  MongoClient.connect(url)
+  MongoClient.connect(defaultURL)
     .then((clientInstance) => {
       client = clientInstance;
       console.log("MongoDB is connected");

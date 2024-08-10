@@ -3,6 +3,7 @@
 <% } %>
 
 <div class="container-fluid d-flex flex-wrap justify-content-evenly">
+  <% if (Array.isArray(books)) { %>
   <% books.forEach(book=>{ %>
   <div class="card-body mb-2 me-2" style="width: 18rem">
     <a href="/bookDetails/<%= book._id %>" class="btn btn-light">
@@ -20,5 +21,7 @@
       </div>
     </div>
   </div>
-  <% }) %>
+  <% }) %><% } else { %>
+    <p>No books available</p>
+  <% } %>
 </div>

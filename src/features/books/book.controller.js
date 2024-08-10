@@ -72,7 +72,6 @@ export default class BookController {
           book.quantity = Number(book.quantity) + r;
         }
         await this.bookRepository.updateBook(book);
-
         const requested = book.requests.some(
           (request) => request.name === req.session.userName
         );
@@ -246,7 +245,26 @@ export default class BookController {
       });
     }
   }
+  async updateRequestBook(req, res) {
 
+
+    const { bookId, requestName, isAccepted } = req.query;
+    // Convert isAccepted to boolean if necessary
+    const accepted = isAccepted === 'true';
+  
+    try {
+      await this.bookRepository.updateRequestStatus(bookId, requestName, accepted);
+      // Redirect back to the page the request came from
+      const redirectUrl = req.headers.referer || '/'; // Default to home if referer is not available
+      res.redirect(redirectUrl);
+    } catch (err) {
+      console.error('Error updating request status:', err);
+      res.status(500).json({ message: 'Error updating request status', error: err.message });
+    }
+
+
+
+  }
   async issueBook(req, res) {
     const bookId = req.params.bookId;
     const book = await this.bookRepository.findBook(bookId);
@@ -255,9 +273,10 @@ export default class BookController {
 
     const name = req.userName;
     const issuedIndex = book.requests.findIndex((r) => r.name == name);
+  
     if (issuedIndex >= 0) {
       book.requests.splice(issuedIndex, 1);
-      book.quantity += 1;
+    //  book.quantity += 1;
       await this.bookRepository.updateBook(book);
 
       return res.render("bookDetails", {
@@ -267,7 +286,15 @@ export default class BookController {
         requested: false,
       });
     }
-
+    if(book.quantity===book.requests.length)
+      {
+        return res.render("bookDetails", {
+          errMessage: "Sorry all the books have been issued",
+          book,
+          userEmail: req.session.userEmail,
+          requested: false,
+        });
+      }
     if (book.quantity <= 0)
       return res.render("bookDetails", {
         errMessage: "Sorry all books are currenly issued",
@@ -276,13 +303,14 @@ export default class BookController {
         requested: false,
       });
 
-    book.quantity = parseInt(book.quantity) - 1;
+   // book.quantity = parseInt(book.quantity) - 1;
     const daysLeft = 30;
     const currentDate = new Date();
     const returnDate = new Date(
       currentDate.getTime() + 30 * 24 * 60 * 60 * 1000
     );
-    book.requests.push({ name, daysLeft, returnDate });
+    var isAccepted=false;
+    book.requests.push({ name, daysLeft, returnDate,isAccepted });
     await this.bookRepository.updateBook(book);
     res.render("bookDetails", {
       errMessage: null,
