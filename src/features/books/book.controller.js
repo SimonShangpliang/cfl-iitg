@@ -342,8 +342,8 @@ export default class BookController {
     const mailOptions = {
       from: process.env.BOOK_MANAGER_EMAIL,
       to: recipientMail,
-      subject: `Return book Dur`,
-      text: `Return book Due in ${days} days`,
+      subject: `Christian Felllowship Book Return Due`,
+      text: `Return book due in ${days} days`,
     };
 
     try {
