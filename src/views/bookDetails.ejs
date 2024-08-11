@@ -73,12 +73,11 @@
       class="alert <%= request.isAccepted ? 'alert-success' : 'alert-primary' %>"
       role="alert"
     >
-      Issued by <%= request.name %>, to be returned on <%= request.daysLeft %>
-      days
+      Requested by <%= request.name %>
       <div class="mt-2">
         <% if (request.isAccepted) { %>
         <!-- <span class="btn btn-success" style="pointer-events: none; opacity: 0.6;">Accepted</span> -->
-
+        to be returned on <%= request.daysLeft %> days
         <a
           href="/update-request-status?bookId=<%= book._id %>&requestName=<%= request.name %>&isAccepted=false"
           class="btn btn-danger"
