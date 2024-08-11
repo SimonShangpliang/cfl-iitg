@@ -64,7 +64,7 @@ export default class BookController {
               (r.returnDate - currentDate) / (1000 * 60 * 60 * 24)
             );
 
-            if (r.daysLeft <= 3)
+            if (r.daysLeft <= 3 && r.isAccepted)
               mailReaders.push({ email: r.email, days: r.daysLeft });
             if (r.daysLeft <= 0) removeIndexes.push(index);
           });
