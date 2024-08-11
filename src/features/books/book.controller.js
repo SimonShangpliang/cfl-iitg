@@ -5,6 +5,7 @@ import {
 } from "@aws-sdk/client-s3";
 import BookModel from "./book.model.js";
 import BooksRepository from "./book.repository.js";
+import nodemailer from "nodemailer";
 
 const bucketName = process.env.BUCKET_NAME;
 const bucketRegion = process.env.BUCKET_REGION;
@@ -56,14 +57,22 @@ export default class BookController {
       if (book) {
         const currentDate = new Date();
         if (book.requests) {
+          const mailReaders = [];
           const removeIndexes = [];
           book.requests.forEach((r, index) => {
             r.daysLeft = Math.round(
               (r.returnDate - currentDate) / (1000 * 60 * 60 * 24)
             );
+
+            if (r.daysLeft <= 3)
+              mailReaders.push({ email: r.email, days: r.daysLeft });
             if (r.daysLeft <= 0) removeIndexes.push(index);
           });
-          // removeIndexes.sort((a, b) => b - a);
+
+          mailReaders.forEach(async (reader) => {
+            await this.sendEmail(reader.email, reader.days);
+          });
+
           let r = 0;
           removeIndexes.forEach((index) => {
             book.requests.splice(index - r, 1);
@@ -246,24 +255,25 @@ export default class BookController {
     }
   }
   async updateRequestBook(req, res) {
-
-
     const { bookId, requestName, isAccepted } = req.query;
     // Convert isAccepted to boolean if necessary
-    const accepted = isAccepted === 'true';
-  
+    const accepted = isAccepted === "true";
+
     try {
-      await this.bookRepository.updateRequestStatus(bookId, requestName, accepted);
+      await this.bookRepository.updateRequestStatus(
+        bookId,
+        requestName,
+        accepted
+      );
       // Redirect back to the page the request came from
-      const redirectUrl = req.headers.referer || '/'; // Default to home if referer is not available
+      const redirectUrl = req.headers.referer || "/"; // Default to home if referer is not available
       res.redirect(redirectUrl);
     } catch (err) {
-      console.error('Error updating request status:', err);
-      res.status(500).json({ message: 'Error updating request status', error: err.message });
+      console.error("Error updating request status:", err);
+      res
+        .status(500)
+        .json({ message: "Error updating request status", error: err.message });
     }
-
-
-
   }
   async issueBook(req, res) {
     const bookId = req.params.bookId;
@@ -271,12 +281,13 @@ export default class BookController {
 
     if (!book) return res.status(400).redirect(req.originalUrl);
 
-    const name = req.userName;
+    const name = req.session.userName;
+    const email = req.session.userEmail;
     const issuedIndex = book.requests.findIndex((r) => r.name == name);
-  
+
     if (issuedIndex >= 0) {
       book.requests.splice(issuedIndex, 1);
-    //  book.quantity += 1;
+      //  book.quantity += 1;
       await this.bookRepository.updateBook(book);
 
       return res.render("bookDetails", {
@@ -286,15 +297,14 @@ export default class BookController {
         requested: false,
       });
     }
-    if(book.quantity===book.requests.length)
-      {
-        return res.render("bookDetails", {
-          errMessage: "Sorry all the books have been issued",
-          book,
-          userEmail: req.session.userEmail,
-          requested: false,
-        });
-      }
+    if (book.quantity === book.requests.length) {
+      return res.render("bookDetails", {
+        errMessage: "Sorry all the books have been issued",
+        book,
+        userEmail: req.session.userEmail,
+        requested: false,
+      });
+    }
     if (book.quantity <= 0)
       return res.render("bookDetails", {
         errMessage: "Sorry all books are currenly issued",
@@ -303,14 +313,14 @@ export default class BookController {
         requested: false,
       });
 
-   // book.quantity = parseInt(book.quantity) - 1;
+    // book.quantity = parseInt(book.quantity) - 1;
     const daysLeft = 30;
     const currentDate = new Date();
     const returnDate = new Date(
       currentDate.getTime() + 30 * 24 * 60 * 60 * 1000
     );
-    var isAccepted=false;
-    book.requests.push({ name, daysLeft, returnDate,isAccepted });
+    var isAccepted = false;
+    book.requests.push({ name, email, daysLeft, returnDate, isAccepted });
     await this.bookRepository.updateBook(book);
     res.render("bookDetails", {
       errMessage: null,
@@ -318,5 +328,29 @@ export default class BookController {
       userEmail: req.session.userEmail,
       requested: true,
     });
+  }
+
+  async sendEmail(recipientMail, days) {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.bookManagerMail,
+        pass: process.env.bookManagerPassword,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.bookManagerMail,
+      to: recipientMail,
+      subject: `Return book Dur`,
+      text: `Return book Due in ${days} days`,
+    };
+
+    try {
+      const info = await transporter.sendMail(mailOptions);
+      console.log("Email sent: " + info.response);
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
