@@ -1,18 +1,28 @@
-<div class="mb-4" style="padding-top: 1rem;">
-  <input type="text" id="searchInput" class="form-control" placeholder="Search by book name or author" aria-label="Search">
+<div class="mb-4" style="padding-top: 1rem">
+  <input
+    type="text"
+    id="searchInput"
+    class="form-control"
+    placeholder="Search by book name or author"
+    aria-label="Search"
+  />
 </div>
-<p id="noBooksMessage" style="display: none;">No books found matching your search criteria.</p>
+<p id="noBooksMessage" style="display: none">
+  No books found matching your search criteria.
+</p>
 
 <% if(errMessage) {%>
 <div class="alert alert-danger" role="alert"><%= errMessage %></div>
 <% } %>
 
 <div class="container-fluid d-flex flex-wrap justify-content-evenly">
-  <% if (Array.isArray(books)) { %>
-  <% books.forEach(book=>{ %>
+  <% if (Array.isArray(books)) { %> <% books.forEach(book=>{ %>
   <div class="card-body mb-2 me-2" style="width: 18rem">
     <a href="/bookDetails/<%= book._id %>" class="btn btn-light">
-      <img style="max-width: 250px" src="<%= book.imagesUrl[0] %>" />
+      <img
+        style="max-width: 250px; max-height: 300px"
+        src="<%= book.imagesUrl[0] %>"
+      />
     </a>
     <div class="card-body">
       <h5 class="card-title">
@@ -27,6 +37,6 @@
     </div>
   </div>
   <% }) %><% } else { %>
-    <p>No books available</p>
+  <p>No books available</p>
   <% } %>
 </div>
