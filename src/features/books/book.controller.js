@@ -334,13 +334,13 @@ export default class BookController {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: process.env.bookManagerMail,
-        pass: process.env.bookManagerPassword,
+        user: process.env.BOOK_MANAGER_EMAIL,
+        pass: process.env.BOOK_MANAGER_PASSWD,
       },
     });
 
     const mailOptions = {
-      from: process.env.bookManagerMail,
+      from: process.env.BOOK_MANAGER_EMAIL,
       to: recipientMail,
       subject: `Return book Dur`,
       text: `Return book Due in ${days} days`,
