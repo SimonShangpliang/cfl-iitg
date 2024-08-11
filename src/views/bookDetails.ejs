@@ -107,7 +107,7 @@
       class="alert <%= request.isAccepted ? 'alert-success' : 'alert-primary' %>"
       role="alert"
     >
-      Issued by <%= request.name %>, to be returned on <%= request.daysLeft %>
+      Issued to <%= request.name %>, to be returned on <%= request.daysLeft %>
       days
       <div class="mt-2">
         <% if (request.isAccepted) { %>
