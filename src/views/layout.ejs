@@ -1,126 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- <script src="main.js"></script> -->
     <link rel="stylesheet" href="books.css" />
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
-      crossorigin="anonymous"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
+        crossorigin="anonymous"
     />
     <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
-      crossorigin="anonymous"
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+        crossorigin="anonymous"
     ></script>
     <title>Christians Fellowship Library</title>
-  </head>
-
-  <body>
-    <nav
-      class="navbar navbar-expand-lg bg-body-tertiary bg-dark"
-      data-bs-theme="dark"
-    >
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">Christians Fellowship Library</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/">Books</a>
-            </li>
-
-            <% if(locals.userEmail=="lalhriemsangfaihriemsang@gmail.com") {%>
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/new"
-                >Add New Book</a
-              >
-            </li>
-            <% } %>
-            <!--  -->
-            <% if(locals.userEmail) { %>
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/logout"
-                >Logout</a
-              >
-            </li>
-            <% }else { %>
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/register"
-                >Register</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/login"
-                >Login</a
-              >
-            </li>
-
-            <% } %>
-          </ul>
+</head>
+<body>
+    <!-- Modal for displaying authors -->
+    <div class="modal fade" id="authorsModal" tabindex="-1" aria-labelledby="authorsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="authorsModalLabel">Authors List</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="authorsList" class="row row-cols-3 g-2">
+                        <!-- Authors will be dynamically added here as a grid -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
-      </div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Christians Fellowship Library</a>
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/">Books</a>
+                    </li>
+                    <% if(locals.userEmail == "lalhriemsangfaihriemsang@gmail.com") { %>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/new">Add New Book</a>
+                    </li>
+                    <% } %>
+                    <% if(locals.userEmail) { %>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/logout">Logout</a>
+                    </li>
+                    <li class="filter">
+                        <a class="nav-link active" aria-current="page" href="#" id="showAuthors">Filter</a>
+                    </li>
+                    <% } else { %>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/register">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/login">Login</a>
+                    </li>
+                    <li class="filter">
+                        <a class="nav-link active" aria-current="page" href="#" id="showAuthors">Filter</a>
+                    </li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
     </nav>
 
     <div class="container">
-      <!-- Place holder for other ejs views -->
-
-      <%-body %>
+        <!-- Place holder for other ejs views -->
+        <%- body %>
     </div>
-
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
         const searchInput = document.getElementById("searchInput");
+        const showAuthorsButton = document.getElementById("showAuthors");
+        const authorsList = document.getElementById("authorsList");
+    
+        // Fetch and display authors when the "Filter" button is clicked
+        showAuthorsButton.addEventListener("click", function (event) {
+            event.preventDefault();
+    
+            fetch("/get-all-authors")
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json().catch(() => {
+                        throw new Error("Error parsing JSON response");
+                    });
+                })
+                .then((data) => {
+                    authorsList.innerHTML = ""; // Clear previous authors
+    
+                    if (Array.isArray(data) && data.length > 0) {
+                        data.forEach((author) => {
+                            const listItem = document.createElement("div");
+                            listItem.className = "col";
+    
+                            const checkboxWrapper = document.createElement("div");
+                            checkboxWrapper.className = "form-check";
+    
+                            const checkbox = document.createElement("input");
+                            checkbox.className = "form-check-input";
+                            checkbox.type = "checkbox";
+                            checkbox.value = author;
+                            checkbox.id = `author-${author}`;
+    
+                            const label = document.createElement("label");
+                            label.className = "form-check-label";
+                            label.setAttribute("for", `author-${author}`);
+                            label.textContent = author;
+    
+                            checkboxWrapper.appendChild(checkbox);
+                            checkboxWrapper.appendChild(label);
+                            listItem.appendChild(checkboxWrapper);
+                            authorsList.appendChild(listItem);
+    
+                            // Add event listener to transfer author name to search bar when clicked
+                            checkbox.addEventListener("change", function () {
+                                if (this.checked) {
+                                    searchInput.value = author;
+                                    updateBookVisibility(); // Trigger search immediately
+    
+                                    // Uncheck all other checkboxes
+                                    const allCheckboxes = document.querySelectorAll(".form-check-input");
+                                    allCheckboxes.forEach((cb) => {
+                                        if (cb !== this) {
+                                            cb.checked = false;
+                                        }
+                                    });
+                                }
+                            });
+                        });
+                    } else {
+                        authorsList.innerHTML = '<div class="col">No authors found</div>';
+                    }
+    
+                    // Show the modal
+                    const authorsModal = new bootstrap.Modal(document.getElementById("authorsModal"));
+                    authorsModal.show();
+                })
+                .catch((error) => {
+                    console.error("Error fetching authors:", error);
+                    authorsList.innerHTML = '<div class="col">Error fetching authors</div>';
+                    const authorsModal = new bootstrap.Modal(document.getElementById("authorsModal"));
+                    authorsModal.show();
+                });
+        });
+    
+        // Function to update book visibility based on the search input
         const bookCards = document.querySelectorAll(".card-body");
-
         function updateBookVisibility() {
-          const query = searchInput.value.toLowerCase();
-          let visibleCount = 0;
-
-          bookCards.forEach((card) => {
-            const title = card
-              .querySelector(".card-title")
-              .innerText.toLowerCase();
-            const description = card
-              .querySelector(".card-text")
-              .innerText.toLowerCase();
-
-            if (title.includes(query) || description.includes(query)) {
-              card.parentElement.style.display = ""; // Show the card
-              visibleCount++;
+            const query = searchInput.value.toLowerCase();
+            let visibleCount = 0;
+    
+            bookCards.forEach((card) => {
+                const title = card.querySelector(".card-title").innerText.toLowerCase();
+                const description = card.querySelector(".card-text").innerText.toLowerCase();
+    
+                if (title.includes(query) || description.includes(query)) {
+                    card.parentElement.style.display = ""; // Show the card
+                    visibleCount++;
+                } else {
+                    card.parentElement.style.display = "none"; // Hide the card
+                }
+            });
+    
+            // Display a message if no books are found
+            const noBooksMessage = document.getElementById("noBooksMessage");
+            if (visibleCount === 0) {
+                noBooksMessage.style.display = "block";
             } else {
-              card.parentElement.style.display = "none"; // Hide the card
+                noBooksMessage.style.display = "none";
             }
-          });
-
-          // Display a message if no books are found
-          const noBooksMessage = document.getElementById("noBooksMessage");
-          if (visibleCount === 0) {
-            noBooksMessage.style.display = "block";
-          } else {
-            noBooksMessage.style.display = "none";
-          }
         }
-
+    
         searchInput.addEventListener("input", updateBookVisibility);
-
+    
         // Initialize the visibility on page load
         updateBookVisibility();
-      });
-    </script>
-  </body>
+    });
+</script>
+</body>
 </html>

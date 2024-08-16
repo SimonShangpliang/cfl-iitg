@@ -10,7 +10,36 @@ export default class BooksRepository {
       return err;
     }
   }
-
+  async getUniqueAuthors(req, res) {
+    try {
+      const db = getDB();
+      const collection = db.collection("books");
+  
+      // Use aggregation to get unique author names
+      const authors = await collection.aggregate([
+        {
+          $group: {
+            _id: "$author" // Group by the `author` field
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            author: "$_id" // Rename the `_id` field to `author`
+          }
+        }
+      ]).toArray();
+  
+      // Map the result to get a list of author names
+      const authorList = authors.map(author => author.author);
+  console.log(authorList)
+    return authorList
+    } catch (err) {
+     return [];
+    }
+  }
+  
+  
   async getAllBooks() {
     try {
       const db = getDB();

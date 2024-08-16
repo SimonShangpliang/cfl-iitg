@@ -47,6 +47,10 @@ app.get("/issueBook/:bookId", jwtAuth, (req, res) =>
 app.get("/update-request-status", jwtAuth, (req, res) =>
   bookController.updateRequestBook(req, res)
 );
+app.get("/get-all-authors", (req, res) =>
+  
+  bookController.getUniqueAuthors(req,res)
+);
 app.get("/updateBook/:bookId", (req, res) =>
   bookController.getUpdateBookForm(req, res)
 );

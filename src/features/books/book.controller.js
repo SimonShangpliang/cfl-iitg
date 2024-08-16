@@ -24,6 +24,22 @@ export default class BookController {
   constructor() {
     this.bookRepository = new BooksRepository();
   }
+  
+
+  async getUniqueAuthors(req, res) {
+    try {
+      const authors = await this.bookRepository.getUniqueAuthors();
+      console.log(authors)
+      // res.status(200).render("authors", authors);
+      res.status(200).json(authors); // Send JSON response
+
+    } catch (err) {
+      // res.status(400).render("authors", {
+      //   authors: []      });
+        res.status(500).json({ error: err.message }); // Send JSON response with error
+
+    }
+  }
 
   async getAll(req, res) {
     try {
