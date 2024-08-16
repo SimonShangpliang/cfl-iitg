@@ -67,27 +67,34 @@
 <% } %>
 
 <div class="container-fluid d-flex flex-wrap justify-content-evenly">
-  <% if (Array.isArray(books)) { %> <% books.forEach(book=>{ %>
-  <div class="card-body mb-2 me-2" style="width: 18rem">
-    <a href="/bookDetails/<%= book._id %>" class="btn btn-light">
-      <img
-        style="max-width: 250px; max-height: 300px"
-        src="<%= book.imagesUrl[0] %>"
-      />
-    </a>
-    <div class="card-body">
-      <h5 class="card-title">
-        <%= book.name %> <br />
-        by <%= book.author %>
-      </h5>
-      <div class="card-text">
-        <span class="grey">Qty:<%=book.quantity%></span>
-        <br />
-        <%=book.desc%>
+  <% if (Array.isArray(books)) { %> 
+    <% books.forEach(book => { %>
+      <div class="card-body mb-2 me-2">
+        <a href="/bookDetails/<%= book._id %>" class="btn btn-light">
+          <% if (book.imagesUrl && book.imagesUrl.length > 0) { %>
+            <img class="card-img" src="<%= book.imagesUrl[0] %>" alt="<%= book.name %>">
+          <% } else { %>
+           
+<div class="default-image">
+  <span>No Image</span> <!-- Optional: Add text or icon if needed -->
+</div>
+          <% } %>
+        </a>
+        <div class="card-body">
+          <h5 class="card-title">
+            <%= book.name %> <br />
+            by <%= book.author %>
+          </h5>
+          <div class="card-text card-quantity">
+            Qty: <%= book.quantity %>
+          </div>
+          <div class="card-text card-desc">
+            <%= book.desc %>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-  <% }) %><% } else { %>
-  <p>No books available</p>
+    <% }) %> 
+  <% } else { %>
+    <p>No books available</p>
   <% } %>
 </div>
