@@ -5,7 +5,58 @@
     class="form-control"
     placeholder="Search by book name or author"
     aria-label="Search"
+    style="margin-bottom: 0.5rem;"
+
   />
+  <button class="btn btn-outline-primary" id="showAuthors">Filter</button>
+  
+  <button class="btn btn-outline-primary" id="showSortDialog" style="margin-left: 0.5rem;">Sort</button>
+</div>
+<div class="modal fade" id="authorsModal" tabindex="-1" aria-labelledby="authorsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="authorsModalLabel">Authors List</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <div id="authorsList" class="row row-cols-3 g-2">
+                  <!-- Authors will be dynamically added here as a grid -->
+              </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+      </div>
+  </div>
+</div>
+<div class="modal fade" id="sortModal" tabindex="-1" aria-labelledby="sortModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="sortModalLabel">Sort Options</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="sortByName" />
+                <label class="form-check-label" for="sortByName">
+                    Sort by Book Name
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="sortByAuthor" />
+                <label class="form-check-label" for="sortByAuthor">
+                    Sort by Author Name
+                </label>
+            </div>
+        </div>
+        
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+      </div>
+  </div>
 </div>
 <p id="noBooksMessage" style="display: none">
   No books found matching your search criteria.

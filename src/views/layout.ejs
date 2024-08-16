@@ -20,24 +20,10 @@
 </head>
 <body>
     <!-- Modal for displaying authors -->
-    <div class="modal fade" id="authorsModal" tabindex="-1" aria-labelledby="authorsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="authorsModalLabel">Authors List</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="authorsList" class="row row-cols-3 g-2">
-                        <!-- Authors will be dynamically added here as a grid -->
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
+   
+
+    <!-- Modal for sorting books by name -->
+
 
     <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark" data-bs-theme="dark">
         <div class="container-fluid">
@@ -62,14 +48,18 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/new">Add New Book</a>
                     </li>
+                  
                     <% } %>
                     <% if(locals.userEmail) { %>
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/logout">Logout</a>
                     </li>
-                    <li class="filter">
+                    <!-- <li class="filter">
                         <a class="nav-link active" aria-current="page" href="#" id="showAuthors">Filter</a>
-                    </li>
+                    </li> -->
+                    <!-- <li class="nav-item">
+                      <a class="nav-link active" aria-current="page" href="#" id="showSortDialog">Sort</a>
+                  </li> -->
                     <% } else { %>
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/register">Register</a>
@@ -77,9 +67,13 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/login">Login</a>
                     </li>
-                    <li class="filter">
+                    <!-- <li class="filter">
                         <a class="nav-link active" aria-current="page" href="#" id="showAuthors">Filter</a>
                     </li>
+                    <li class="nav-item">
+                      <a class="nav-link active" aria-current="page" href="#" id="showSortDialog">Sort</a>
+                  </li> -->
+                  
                     <% } %>
                 </ul>
             </div>
@@ -90,6 +84,65 @@
         <!-- Place holder for other ejs views -->
         <%- body %>
     </div>
+
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const showSortDialogButton = document.getElementById("showSortDialog");
+    const sortByNameCheckbox = document.getElementById("sortByName");
+    const sortByAuthorCheckbox = document.getElementById("sortByAuthor");
+    const container = document.querySelector(".container-fluid.d-flex.flex-wrap.justify-content-evenly");
+
+    function updateBookVisibility() {
+        if (!container) {
+            console.error("Container not found.");
+            return;
+        }
+
+        let booksArray = Array.from(container.children);
+
+        if (sortByNameCheckbox.checked) {
+            booksArray.sort((a, b) => {
+                const titleA = a.querySelector(".card-title")?.innerText.toLowerCase().trim() || '';
+                const titleB = b.querySelector(".card-title")?.innerText.toLowerCase().trim() || '';
+                return titleA.localeCompare(titleB);
+            });
+        } else if (sortByAuthorCheckbox.checked) {
+            booksArray.sort((a, b) => {
+                const authorA = a.querySelector(".card-title")?.innerText.split("by")[1]?.toLowerCase().trim() || '';
+                const authorB = b.querySelector(".card-title")?.innerText.split("by")[1]?.toLowerCase().trim() || '';
+                return authorA.localeCompare(authorB);
+            });
+        }
+
+        container.innerHTML = "";
+
+        booksArray.forEach((col) => {
+            container.appendChild(col);
+        });
+    }
+
+    showSortDialogButton.addEventListener("click", function (event) {
+        event.preventDefault();
+        const sortModal = new bootstrap.Modal(document.getElementById("sortModal"));
+        sortModal.show();
+    });
+
+    sortByNameCheckbox.addEventListener("change", function () {
+        if (sortByNameCheckbox.checked) {
+            sortByAuthorCheckbox.checked = false; // Uncheck the author sort if name sort is selected
+        }
+        updateBookVisibility();
+    });
+
+    sortByAuthorCheckbox.addEventListener("change", function () {
+        if (sortByAuthorCheckbox.checked) {
+            sortByNameCheckbox.checked = false; // Uncheck the name sort if author sort is selected
+        }
+        updateBookVisibility();
+    });
+});
+
+    </script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const searchInput = document.getElementById("searchInput");
@@ -149,6 +202,10 @@
                                             cb.checked = false;
                                         }
                                     });
+                                }else{
+                                  searchInput.value =""
+                                  updateBookVisibility(); // Trigger search immediately
+
                                 }
                             });
                         });
