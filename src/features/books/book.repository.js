@@ -106,7 +106,10 @@ export default class BooksRepository {
         quantity: book.quantity,
         categories: book.categories,
         typeOf: book.typeOf,
-        ebookLink: book.ebookLink, // Add eBook link if applicable
+        ebookLink: book.ebookLink,
+        numOfPages:book.numOfPages,
+        year:book.year
+         // Add eBook link if applicable
         // Handle images if necessary
         // You might need additional logic to process and store image URLs
       };

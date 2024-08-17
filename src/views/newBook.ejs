@@ -14,6 +14,18 @@
     />
   </div>
   <div class="mb-3">
+    <label class="form-label"       required
+    >Type of Book</label>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="typeOf[]" value="hardcopy" id="hardcopyCheckbox">
+        <label class="form-check-label" for="hardcopyCheckbox">Hardcopy</label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="typeOf[]" value="ebook" id="ebookCheckbox" >
+        <label class="form-check-label" for="ebookCheckbox">eBook</label>
+    </div>
+</div>
+  <div class="mb-3" id="contributorContainer" style="display: none;">
     <label for="contributor" class="form-label">Contributor</label>
     <input
       type="text"
@@ -23,6 +35,7 @@
       required
     />
   </div>
+ 
   <div class="mb-3">
     <label for="desc" class="form-label">Book Description</label>
     <textarea
@@ -30,7 +43,6 @@
       id="desc"
       name="desc"
       rows="3"
-      required
     ></textarea>
   </div>
   <div class="mb-3" id="quantityContainer">
@@ -43,8 +55,24 @@
       step="0.01"
     />
   </div>
+  <div class="mb-3" id="yearContainer">
+    <label for="year" class="form-label">Year Published</label>
+    <input
+      type="number"
+      class="form-control"
+      id="year"
+      name="year"
+      step="0.01"
+    />
+  </div>
+  <div class="mb-3" id="numOfPagesContainer">
+    <label for="numOfPages" class="form-label">Number Of Pages</label>
+    <input type="number" class="form-control" id="numOfPages" name="numOfPages" step="1" min="1" required />
+  </div>
+  
   <div class="mb-3">
-    <label class="form-label">Categories</label>
+    <label class="form-label"       required
+    >Categories</label>
   
     <div class="form-check">
       <input class="form-check-input" type="checkbox" name="categories[]" value="Gospel" id="categoryGospel">
@@ -120,18 +148,24 @@
       <input class="form-check-input" type="checkbox" name="categories[]" value="Suffering" id="categorySuffering">
       <label class="form-check-label" for="categorySuffering">Suffering</label>
     </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="categories[]" value="Testimony" id="categoryTestimony">
+      <label class="form-check-label" for="categoryTestimony">Testimony</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="categories[]" value="Commentary" id="categoryCommentary">
+      <label class="form-check-label" for="categoryCommentary">Commentary</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="categories[]" value="Biography" id="categoryBiography">
+      <label class="form-check-label" for="categoryBiography">Biography</label>
+    </div>
   
   </div>
   
   
   
-  <div class="mb-3">
-    <label for="typeOf" class="form-label">Type of Book</label>
-    <select class="form-control" id="typeOf" name="typeOf" required>
-      <option value="hardcopy">Hardcopy</option>
-      <option value="ebook">eBook</option>
-    </select>
-  </div>
+
 
   <div class="mb-3">
     <label for="imagesUrl" class="form-label">Image URL</label>
@@ -144,13 +178,14 @@
     />
   </div>
   <div class="mb-3" id="ebookLinkContainer" style="display: none;">
-    <label for="ebookLink" class="form-label">eBook Link</label>
+    <label for="ebookLink" class="form-label" >eBook Link</label>
     <input
       type="url"
       class="form-control"
       id="ebookLink"
       name="ebookLink"
       placeholder="https://example.com/ebook"
+
     />
   </div>
   <button type="submit" class="btn btn-primary">Add Book</button>

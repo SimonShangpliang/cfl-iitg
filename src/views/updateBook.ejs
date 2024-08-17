@@ -22,6 +22,20 @@
     />
   </div>
   <div class="mb-3">
+    <label class="form-label">Type of Book</label>
+    <div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="hardcopyCheckbox" name="typeOf[]" value="hardcopy" <%= book.typeOf.includes('hardcopy') ? 'checked' : '' %>>
+        <label class="form-check-label" for="hardcopyCheckbox">Hardcopy</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="ebookCheckbox" name="typeOf[]" value="ebook" <%= book.typeOf.includes('ebook') ? 'checked' : '' %>>
+        <label class="form-check-label" for="hardcopyCheckbox">eBook</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-3" id="contributorContainer" style="display: none;">
     <label for="contributor" class="form-label">Contributor</label>
     <input
       type="text"
@@ -34,11 +48,10 @@
   </div>
   <div class="mb-3">
     <label for="desc" class="form-label">Book Description</label>
-    <textarea class="form-control" id="desc" name="desc" rows="3" required>
-      <%= book.desc %>
-    </textarea>
+    <textarea class="form-control" id="desc" name="desc" rows="3" required><%= book.desc %></textarea>
   </div>
-  <div class="mb-3">
+
+  <div class="mb-3" id="quantityContainer" style="display: none;">
     <label for="quantity" class="form-label">Quantity</label>
     <input
       type="number"
@@ -46,12 +59,24 @@
       id="quantity"
       name="quantity"
       value="<%= book.quantity %>"
+      step="1"
+    />
+  </div>
+  <div class="mb-3" id="yearContainer">
+    <label for="year" class="form-label">Year Published</label>
+    <input
+      type="number"
+      class="form-control"
+      id="year"
+      name="year"
+      value="<%= book.year %>"
+
       step="0.01"
     />
   </div>
   <div class="mb-3">
     <label class="form-label">Categories</label>
-    <% const categories = ['Gospel', 'New believers', 'General', 'Church', 'Bible study', 'Christ', 'Cross', 'Faith', 'Letters', 'Ministry', 'Overcomers', 'Prophetic', 'Restoration', 'Revelation', 'Suffering']; %>
+    <% const categories = ['Gospel', 'New believers', 'General', 'Church', 'Bible study', 'Christ', 'Cross', 'Faith', 'Letters', 'Ministry', 'Overcomers', 'Prophetic', 'Restoration', 'Revelation', 'Suffering','Testimony','Biography','Commentary']; %>
     <% categories.forEach(cat => { %>
       <div class="form-check">
         <input class="form-check-input" type="checkbox" name="categories[]" value="<%= cat %>" id="category<%= cat.replace(/ /g, '') %>" <%= book.categories.includes(cat) ? 'checked' : '' %>>
@@ -59,13 +84,20 @@
       </div>
     <% }) %>
   </div>
+
+
   <div class="mb-3">
-    <label for="typeOf" class="form-label">Type of Book</label>
-    <select class="form-control" id="typeOf" name="typeOf" required>
-      <option value="hardcopy" <%= book.typeOf === 'hardcopy' ? 'selected' : '' %>>Hardcopy</option>
-      <option value="ebook" <%= book.typeOf === 'ebook' ? 'selected' : '' %>>eBook</option>
-    </select>
+    <label for="numberOfPages" class="form-label">Number of Pages</label>
+    <input
+      type="number"
+      class="form-control"
+      id="numberOfPages"
+      name="numberOfPages"
+      value="<%= book.numOfPages %>"
+      required
+    />
   </div>
+  
   <div class="mb-3">
     <label for="imagesUrl" class="form-label">Image URL</label>
     <input
@@ -76,7 +108,8 @@
       multiple
     />
   </div>
-  <div class="mb-3" id="ebookLinkContainer" style="<%= book.typeOf === 'ebook' ? 'display: block;' : 'display: none;' %>">
+
+  <div class="mb-3" id="ebookLinkContainer" style="display: none;">
     <label for="ebookLink" class="form-label">eBook Link</label>
     <input
       type="url"
@@ -87,16 +120,32 @@
       placeholder="https://example.com/ebook"
     />
   </div>
+
   <button type="submit" class="btn btn-primary">Update Book</button>
 </form>
 
 <script>
-  document.getElementById('typeOf').addEventListener('change', function() {
+  function updateFormFields() {
+    const typeOf = Array.from(document.querySelectorAll('input[name="typeOf[]"]:checked')).map(checkbox => checkbox.value);
     const ebookLinkContainer = document.getElementById('ebookLinkContainer');
-    if (this.value === 'ebook') {
+    const quantityContainer = document.getElementById('quantityContainer');
+
+    if (typeOf.includes('ebook')) {
       ebookLinkContainer.style.display = 'block';
     } else {
       ebookLinkContainer.style.display = 'none';
     }
+
+    if (typeOf.includes('hardcopy')) {
+      quantityContainer.style.display = 'block';
+    } else {
+      quantityContainer.style.display = 'none';
+    }
+  }
+
+  document.querySelectorAll('input[name="typeOf[]"]').forEach(checkbox => {
+    checkbox.addEventListener('change', updateFormFields);
   });
+
+  document.addEventListener('DOMContentLoaded', updateFormFields);
 </script>

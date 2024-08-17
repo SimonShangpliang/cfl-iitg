@@ -60,6 +60,12 @@ app.post("/updateBook/:bookId", jwtAuth, uploadFiles.array("imagesUrl", 10),(req
 app.get("/deleteBook/:bookId", (req, res) =>
   bookController.deleteBook(req, res)
 );
+// Assuming you're using Express.js
+app.delete('/deleteBook/:bookId', async (req, res) => {
+  bookController.deleteBook(req, res)
+});
+
+
 app.get("/logout", jwtAuth, (req, res) => userController.logout(req, res));
 
 const PORT = process.env.PORT || 3500;

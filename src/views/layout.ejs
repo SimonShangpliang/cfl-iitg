@@ -16,7 +16,7 @@
         integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
         crossorigin="anonymous"
     ></script>
-    <title>Christians Fellowship Library</title>
+    <title>Christian Fellowship Library</title>
     <style>
         /* Page heading style */
         h1 {
@@ -36,7 +36,7 @@
 
     <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark" data-bs-theme="dark" style="padding-bottom: 0;">
         <div class="container-fluid" style="margin-bottom: 0;">
-            <a class="navbar-brand" href="#" style="margin-bottom: 0;">    <h4  style="margin-bottom: 0;padding-bottom: 0;"><strong>Christians Fellowship Library</strong></h4>
+            <a class="navbar-brand" href="#" style="margin-bottom: 0;">    <h4  style="margin-bottom: 0;padding-bottom: 0;"><strong>Christian Fellowship Library</strong></h4>
                 </a>
             <button
                 class="navbar-toggler"
@@ -54,7 +54,8 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/">Books</a>
                     </li>
-                    <% if(locals.userEmail == "lalhriemsangfaihriemsang@gmail.com") { %>
+                    <% if(locals.userEmail == "lalhriemsangfaihriemsang@gmail.com"||
+                    locals.userEmail=="gvp1992@gmail.com") { %>
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/new">Add New Book</a>
                     </li>
@@ -94,14 +95,15 @@
         <!-- Place holder for other ejs views -->
         <%- body %>
     </div>
-
-    <script>
-document.addEventListener("DOMContentLoaded", function () {
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
     const showSortDialogButton = document.getElementById("showSortDialog");
     const sortByNameCheckbox = document.getElementById("sortByName");
     const sortByAuthorCheckbox = document.getElementById("sortByAuthor");
+    const sortByPagesCheckbox = document.getElementById("sortByPages");
+    const sortOrderSelect = document.getElementById("sortOrder");
     const container = document.querySelector(".container-fluid.d-flex.flex-wrap.justify-content-evenly");
-
+console.log("here :", sortByPagesCheckbox)
     function updateBookVisibility() {
         if (!container) {
             console.error("Container not found.");
@@ -114,13 +116,28 @@ document.addEventListener("DOMContentLoaded", function () {
             booksArray.sort((a, b) => {
                 const titleA = a.querySelector(".card-title")?.innerText.toLowerCase().trim() || '';
                 const titleB = b.querySelector(".card-title")?.innerText.toLowerCase().trim() || '';
-                return titleA.localeCompare(titleB);
+                if (sortOrderSelect.value === "ascending") {
+                    return titleA.localeCompare(titleB);                } else {
+                        return titleB.localeCompare(titleA);                }                
             });
         } else if (sortByAuthorCheckbox.checked) {
             booksArray.sort((a, b) => {
                 const authorA = a.querySelector(".card-title")?.innerText.split("by")[1]?.toLowerCase().trim() || '';
                 const authorB = b.querySelector(".card-title")?.innerText.split("by")[1]?.toLowerCase().trim() || '';
-                return authorA.localeCompare(authorB);
+                if (sortOrderSelect.value === "ascending") {
+                    return authorA.localeCompare(authorB);                } else {
+                        return authorB.localeCompare(authorA);                }     
+            });
+        } else if (sortByPagesCheckbox.checked) {
+            booksArray.sort((a, b) => {
+                const pagesA = parseInt(a.querySelector(".card-pages")?.innerText.trim() || '0', 10);
+                const pagesB = parseInt(b.querySelector(".card-pages")?.innerText.trim() || '0', 10);
+                console.log(pagesA, pagesB)
+                if (sortOrderSelect.value === "ascending") {
+                    return pagesA - pagesB;
+                } else {
+                    return pagesB - pagesA;
+                }
             });
         }
 
@@ -139,20 +156,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
     sortByNameCheckbox.addEventListener("change", function () {
         if (sortByNameCheckbox.checked) {
-            sortByAuthorCheckbox.checked = false; // Uncheck the author sort if name sort is selected
+            sortByAuthorCheckbox.checked = false;
+            sortByPagesCheckbox.checked = false;
         }
         updateBookVisibility();
     });
 
     sortByAuthorCheckbox.addEventListener("change", function () {
         if (sortByAuthorCheckbox.checked) {
-            sortByNameCheckbox.checked = false; // Uncheck the name sort if author sort is selected
+            sortByNameCheckbox.checked = false;
+            sortByPagesCheckbox.checked = false;
         }
         updateBookVisibility();
     });
+
+    sortByPagesCheckbox.addEventListener("change", function () {
+        console.log("checked unchecked")
+        if (sortByPagesCheckbox.checked) {
+            sortByNameCheckbox.checked = false;
+            sortByAuthorCheckbox.checked = false;
+        }
+        updateBookVisibility();
+    });
+
+    sortOrderSelect.addEventListener("change", updateBookVisibility);
 });
 
-    </script>
+</script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("searchInput");
@@ -237,40 +267,47 @@ document.addEventListener("DOMContentLoaded", function () {
                 authorsModal.show();
             });
     });
+    function handleTypeSelection(event) {
+        const clickedCheckbox = event.target;
 
+        if (clickedCheckbox.id === "filterEbook" && clickedCheckbox.checked) {
+            filterHardcopyCheckbox.checked = false;
+        } else if (clickedCheckbox.id === "filterHardcopy" && clickedCheckbox.checked) {
+            filterEbookCheckbox.checked = false;
+        }
+
+        updateBookVisibility();
+    }
     // Function to update book visibility based on the search input and filters
     function updateBookVisibility() {
-        const query = searchInput.value.toLowerCase();
-        const showEbook = filterEbookCheckbox.checked;
-        const showHardcopy = filterHardcopyCheckbox.checked;
-        const selectedCategory = document.querySelector('#categoriesModal .form-check-input:checked')?.value;
-console.log("selectedCategory", selectedCategory)
-        let visibleCount = 0;
+    const query = searchInput.value.toLowerCase();
+    const showEbook = filterEbookCheckbox.checked;
+    const showHardcopy = filterHardcopyCheckbox.checked;
+    const selectedCategory = document.querySelector('#categoriesModal .form-check-input:checked')?.value;
 
-        document.querySelectorAll(".card-body").forEach((card) => {
-            const title = card.querySelector(".card-content .card-title").innerText.toLowerCase();
-            const description = card.querySelector(".card-content .card-text").innerText.toLowerCase();
-            const type = card.dataset.type; // Assuming each card has a data-type attribute
-            const categories = card.dataset.categories?.split(',') || []; // Assuming categories are stored as comma-separated string
+    let visibleCount = 0;
 
-            const matchesQuery = title.includes(query) || description.includes(query);
-            const matchesType = (type === 'ebook' && showEbook) || (type === 'hardcopy' && showHardcopy);
-            const matchesCategory = !selectedCategory || categories.includes(selectedCategory);
-            console.log(categories)
-            console.log(title, matchesCategory)
+    document.querySelectorAll(".card-body").forEach((card) => {
+        const title = card.querySelector(".card-content .card-title").innerText.toLowerCase();
+        const description = card.querySelector(".card-content .card-text").innerText.toLowerCase();
+        const types = card.dataset.type?.split(',') || []; // Assuming type is stored as a comma-separated string and is now an array
+        const categories = card.dataset.categories?.split(',') || []; // Assuming categories are stored as comma-separated string
+        const matchesQuery = title.includes(query) || description.includes(query);
+        const matchesType = ((showEbook && types.includes('ebook')) )||((showHardcopy && types.includes('hardcopy')) );
+        const matchesCategory = !selectedCategory || categories.includes(selectedCategory);
 
-            if (matchesQuery && (showEbook || showHardcopy) && matchesType && matchesCategory) {
-                card.style.display = ""; // Show the card
-                visibleCount++;
-            } else {
-                card.style.display = "none"; // Hide the card
-            }
-        });
-    }
+        if (matchesQuery && matchesType && matchesCategory) {
+            card.style.display = ""; // Show the card
+            visibleCount++;
+        } else {
+            card.style.display = "none"; // Hide the card
+        }
+    });
+}
+
     searchInput.addEventListener("input", updateBookVisibility);
-    filterEbookCheckbox.addEventListener("change", updateBookVisibility);
-    filterHardcopyCheckbox.addEventListener("change", updateBookVisibility);
-
+    filterEbookCheckbox.addEventListener("change", handleTypeSelection);
+    filterHardcopyCheckbox.addEventListener("change", handleTypeSelection);
     applyCategoryFilterButton.addEventListener('click', function () {
         updateBookVisibility(); // Trigger the update based on selected category
         const categoriesModal = new bootstrap.Modal(document.getElementById('categoriesModal'));
@@ -309,18 +346,45 @@ document.getElementById('applyCategoryFilter').addEventListener('click', functio
 
 </script>
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const typeOfSelect = document.getElementById('typeOf');
+ document.addEventListener('DOMContentLoaded', function() {
+    const ebookCheckbox = document.getElementById('ebookCheckbox');
+    const hardcopyCheckbox = document.getElementById('hardcopyCheckbox');
     const ebookLinkContainer = document.getElementById('ebookLinkContainer');
+    const quantityContainer = document.getElementById('quantityContainer');
     
-    typeOfSelect?.addEventListener('change', function() {
-      if (this.value === 'ebook') {
-        ebookLinkContainer.style.display = 'block'; // Show the eBook link field
-      } else {
-        ebookLinkContainer.style.display = 'none'; // Hide the eBook link field
-      }
-    });
-  });
+    const contributorContainer = document.getElementById('contributorContainer');
+
+    function updateVisibility() {
+        if (ebookCheckbox.checked && !hardcopyCheckbox.checked) {
+            ebookLinkContainer.style.display = 'block'; // Show the eBook link field
+            quantityContainer.style.display = 'none'; // Hide the quantity field
+            contributorContainer.style.display='none';
+
+        } else if (ebookCheckbox.checked && hardcopyCheckbox.checked){
+            ebookLinkContainer.style.display = 'block'; // Show the eBook link field
+            quantityContainer.style.display = 'block'; // Hide the quantity field
+contributorContainer.style.display='block';
+        }else if(!ebookCheckbox.checked && hardcopyCheckbox.checked){
+            ebookLinkContainer.style.display = 'none'; // Hide the eBook link field
+            quantityContainer.style.display = 'block'; // Show the quantity field
+            contributorContainer.style.display='block';
+
+        }else
+        {
+            ebookLinkContainer.style.display = 'none'; // Hide the eBook link field
+            quantityContainer.style.display = 'none'; // Show the quantity field
+            contributorContainer.style.display='none';
+        }
+    }
+
+    ebookCheckbox.addEventListener('change', updateVisibility);
+    hardcopyCheckbox.addEventListener('change', updateVisibility);
+
+    // Call the function initially to set the correct visibility on page load
+    updateVisibility();
+});
+
+
 </script>
 
 <style>
@@ -360,6 +424,9 @@ document.getElementById('applyCategoryFilter').addEventListener('click', functio
     color: #333;
     text-align: center; /* Center text horizontally */
   }
+  .card-pages {
+   
+  }
   .carousel-item img {
   max-height: 500px;
   object-fit: contain; /* Ensures the image scales proportionally */
@@ -381,18 +448,31 @@ document.getElementById('applyCategoryFilter').addEventListener('click', functio
     -webkit-line-clamp: 2; /* Number of lines to display */
     -webkit-box-orient: vertical;
   }
+  .default-image {
+  width: 9rem; /* Fixed width to simulate book dimensions */
+  height: 15rem; /* Adjust height to maintain proportions */
+  background: linear-gradient(to bottom, #51a023, #000000); /* Gradient from green to black */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Space out title and author */
+  align-items: center;
+  text-align: center;
+  color: white;
+  padding: 1rem; /* Padding for space around text */
+  border: 1px solid #ddd; /* Border for card-like appearance */
+  border-radius: 0.2rem; /* Rounded corners */
+}
 
- .default-image {
-    width: 100%;
-    height: 15rem; /* Match the height of the image */
-    background-color: #f0f0f0; /* Light grey or any other color */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    line-height: 15rem; /* Same as the height for vertical centering */
-    color: #999; /* Light color for any placeholder text */
-  }
+.default-image .title {
+  margin-bottom: auto; /* Push title to the top */
+  padding-bottom: 1rem; /* Padding from the top */
+}
+
+.default-image .author {
+  margin-top: auto; /* Push author to the bottom */
+  padding-top: 1rem; /* Padding from the bottom */
+}
+
   .categories {
   display: flex;
   justify-content: center; /* Center horizontally */
@@ -400,6 +480,26 @@ document.getElementById('applyCategoryFilter').addEventListener('click', functio
 }
   .badge {
   margin: 0 5px 5px 0;
+}
+
+/* Ensure the buttons and checkboxes are aligned horizontally */
+.container-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* Space between buttons */
+}
+
+/* Style for checkbox group to stack checkboxes vertically */
+.form-check-group {
+  display: flex;
+  flex-direction: column;
+  margin-left: 1rem; /* Space between buttons and checkbox group */
+}
+
+/* Optional: Style for form-check elements */
+.form-check {
+  display: flex;
+  align-items: center;
 }
 
 </style>
