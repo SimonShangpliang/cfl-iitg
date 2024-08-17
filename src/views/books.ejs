@@ -176,10 +176,14 @@
           <% } %>
         </a>
         <div class="card-content">
-          <h5 class="card-title">
-            <%= book.name %> <br />
-            by <%= book.author %>
+          <h5 class="card-title" style="margin-bottom: 0;">
+            <%= book.name %></br>
+            
           </h5>
+          <p class="card-text" >
+            <i>by <%= book.author %></i>
+          </p>
+          
           <!-- <div class="card-text card-quantity">
             Quantity: <%= book.quantity %>
           </div> -->
@@ -190,7 +194,7 @@
               <% }) %>
             <% } %>
           </div>
-          <div class="card-text card-desc">
+          <div class="card-text card-desc" style="padding-bottom: 0.3rem;">
             <%= book.desc %>
           </div>
         </div>

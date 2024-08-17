@@ -44,17 +44,19 @@
       </button>
     </div>
     <div class="pt-4">
-      <h3><%=book.name%> by <%=book.author%></h3>
+      <h3 style="margin-bottom: 0;"><%=book.name%></h3>
+     <p><i> by <%=book.author%></i></p>
   
       <div>
         <% book.categories.forEach(cat => { %>
           <span class="badge bg-secondary"><%= cat %></span>
         <% }) %>
       </div>
-      <h4>Description</h4>
       <% if (book.typeOf === 'ebook') { %>
-        <a href="<%= book.ebookLink %>" class="btn btn-success">Download eBook</a>
+        <a href="<%= book.ebookLink %>" class="btn btn-success" style="margin-top: 0.5rem;">Download eBook</a>
       <% } %>
+      <h4 style="margin-top: 0.5rem;">Description</h4>
+
       <p><%=book.desc%></p>
       <a class="btn btn-secondary">Qty: <%= book.quantity%></a>
   
