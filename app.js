@@ -54,7 +54,7 @@ app.get("/get-all-authors", (req, res) =>
 app.get("/updateBook/:bookId", (req, res) =>
   bookController.getUpdateBookForm(req, res)
 );
-app.post("/updateBook/:bookId", (req, res) =>
+app.post("/updateBook/:bookId", jwtAuth, uploadFiles.array("imagesUrl", 10),(req, res) =>
   bookController.updateBook(req, res)
 );
 app.get("/deleteBook/:bookId", (req, res) =>

@@ -17,6 +17,15 @@
         crossorigin="anonymous"
     ></script>
     <title>Christians Fellowship Library</title>
+    <style>
+        /* Page heading style */
+        h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
     <!-- Modal for displaying authors -->
@@ -27,7 +36,8 @@
 
     <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark" data-bs-theme="dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Christians Fellowship Library</a>
+            <a class="navbar-brand" href="#">    <h4><strong>Christians Fellowship Library</strong></h4>
+                </a>
             <button
                 class="navbar-toggler"
                 type="button"
@@ -144,120 +154,175 @@ document.addEventListener("DOMContentLoaded", function () {
 
     </script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const searchInput = document.getElementById("searchInput");
-        const showAuthorsButton = document.getElementById("showAuthors");
-        const authorsList = document.getElementById("authorsList");
-    
-        // Fetch and display authors when the "Filter" button is clicked
-        showAuthorsButton.addEventListener("click", function (event) {
-            event.preventDefault();
-    
-            fetch("/get-all-authors")
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error("Network response was not ok");
-                    }
-                    return response.json().catch(() => {
-                        throw new Error("Error parsing JSON response");
-                    });
-                })
-                .then((data) => {
-                    authorsList.innerHTML = ""; // Clear previous authors
-    
-                    if (Array.isArray(data) && data.length > 0) {
-                        data.forEach((author) => {
-                            const listItem = document.createElement("div");
-                            listItem.className = "col";
-    
-                            const checkboxWrapper = document.createElement("div");
-                            checkboxWrapper.className = "form-check";
-    
-                            const checkbox = document.createElement("input");
-                            checkbox.className = "form-check-input";
-                            checkbox.type = "checkbox";
-                            checkbox.value = author;
-                            checkbox.id = `author-${author}`;
-    
-                            const label = document.createElement("label");
-                            label.className = "form-check-label";
-                            label.setAttribute("for", `author-${author}`);
-                            label.textContent = author;
-    
-                            checkboxWrapper.appendChild(checkbox);
-                            checkboxWrapper.appendChild(label);
-                            listItem.appendChild(checkboxWrapper);
-                            authorsList.appendChild(listItem);
-    
-                            // Add event listener to transfer author name to search bar when clicked
-                            checkbox.addEventListener("change", function () {
-                                if (this.checked) {
-                                    searchInput.value = author;
-                                    updateBookVisibility(); // Trigger search immediately
-    
-                                    // Uncheck all other checkboxes
-                                    const allCheckboxes = document.querySelectorAll(".form-check-input");
-                                    allCheckboxes.forEach((cb) => {
-                                        if (cb !== this) {
-                                            cb.checked = false;
-                                        }
-                                    });
-                                }else{
-                                  searchInput.value =""
-                                  updateBookVisibility(); // Trigger search immediately
+  document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("searchInput");
+    const showAuthorsButton = document.getElementById("showAuthors");
+    const authorsList = document.getElementById("authorsList");
+    const filterEbookCheckbox = document.getElementById("filterEbook");
+    const filterHardcopyCheckbox = document.getElementById("filterHardcopy");
+    const applyCategoryFilterButton = document.getElementById("applyCategoryFilter");
+    const applyClearCategoryFilterButton = document.getElementById("applyClearCategoryFilter");
 
-                                }
-                            });
-                        });
-                    } else {
-                        authorsList.innerHTML = '<div class="col">No authors found</div>';
-                    }
-    
-                    // Show the modal
-                    const authorsModal = new bootstrap.Modal(document.getElementById("authorsModal"));
-                    authorsModal.show();
-                })
-                .catch((error) => {
-                    console.error("Error fetching authors:", error);
-                    authorsList.innerHTML = '<div class="col">Error fetching authors</div>';
-                    const authorsModal = new bootstrap.Modal(document.getElementById("authorsModal"));
-                    authorsModal.show();
-                });
-        });
-    
-        // Function to update book visibility based on the search input
-        const bookCards = document.querySelectorAll(".card-body");
-        function updateBookVisibility() {
-            const query = searchInput.value.toLowerCase();
-            let visibleCount = 0;
-    
-            bookCards.forEach((card) => {
-                const title = card.querySelector(".card-title").innerText.toLowerCase();
-                const description = card.querySelector(".card-text").innerText.toLowerCase();
-    
-                if (title.includes(query) || description.includes(query)) {
-                    card.parentElement.style.display = ""; // Show the card
-                    visibleCount++;
-                } else {
-                    card.parentElement.style.display = "none"; // Hide the card
+    // Fetch and display authors when the "Filter" button is clicked
+    showAuthorsButton.addEventListener("click", function (event) {
+        event.preventDefault();
+
+        fetch("/get-all-authors")
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
                 }
+                return response.json().catch(() => {
+                    throw new Error("Error parsing JSON response");
+                });
+            })
+            .then((data) => {
+                authorsList.innerHTML = ""; // Clear previous authors
+
+                if (Array.isArray(data) && data.length > 0) {
+                    data.forEach((author) => {
+                        const listItem = document.createElement("div");
+                        listItem.className = "col";
+
+                        const checkboxWrapper = document.createElement("div");
+                        checkboxWrapper.className = "form-check";
+
+                        const checkbox = document.createElement("input");
+                        checkbox.className = "form-check-input";
+                        checkbox.type = "checkbox";
+                        checkbox.value = author;
+                        checkbox.id = `author-${author}`;
+
+                        const label = document.createElement("label");
+                        label.className = "form-check-label";
+                        label.setAttribute("for", `author-${author}`);
+                        label.textContent = author;
+
+                        checkboxWrapper.appendChild(checkbox);
+                        checkboxWrapper.appendChild(label);
+                        listItem.appendChild(checkboxWrapper);
+                        authorsList.appendChild(listItem);
+
+                        // Add event listener to transfer author name to search bar when clicked
+                        checkbox.addEventListener("change", function () {
+                            if (this.checked) {
+                                searchInput.value = author;
+                                updateBookVisibility(); // Trigger search immediately
+
+                                // Uncheck all other checkboxes
+                                const allCheckboxes = document.querySelectorAll(".form-check-input");
+                                allCheckboxes.forEach((cb) => {
+                                    if (cb !== this) {
+                                        cb.checked = false;
+                                    }
+                                });
+                            } else {
+                                searchInput.value = "";
+                                updateBookVisibility(); // Trigger search immediately
+                            }
+                        });
+                    });
+                } else {
+                    authorsList.innerHTML = '<div class="col">No authors found</div>';
+                }
+
+                // Show the modal
+                const authorsModal = new bootstrap.Modal(document.getElementById("authorsModal"));
+                authorsModal.show();
+            })
+            .catch((error) => {
+                console.error("Error fetching authors:", error);
+                authorsList.innerHTML = '<div class="col">Error fetching authors</div>';
+                const authorsModal = new bootstrap.Modal(document.getElementById("authorsModal"));
+                authorsModal.show();
             });
-    
-            // Display a message if no books are found
-            const noBooksMessage = document.getElementById("noBooksMessage");
-            if (visibleCount === 0) {
-                noBooksMessage.style.display = "block";
-            } else {
-                noBooksMessage.style.display = "none";
-            }
-        }
-    
-        searchInput.addEventListener("input", updateBookVisibility);
-    
-        // Initialize the visibility on page load
-        updateBookVisibility();
     });
+
+    // Function to update book visibility based on the search input and filters
+    function updateBookVisibility() {
+        const query = searchInput.value.toLowerCase();
+        const showEbook = filterEbookCheckbox.checked;
+        const showHardcopy = filterHardcopyCheckbox.checked;
+        const selectedCategory = document.querySelector('#categoriesModal .form-check-input:checked')?.value;
+console.log("selectedCategory", selectedCategory)
+        let visibleCount = 0;
+
+        document.querySelectorAll(".card-body").forEach((card) => {
+            const title = card.querySelector(".card-content .card-title").innerText.toLowerCase();
+            const description = card.querySelector(".card-content .card-text").innerText.toLowerCase();
+            const type = card.dataset.type; // Assuming each card has a data-type attribute
+            const categories = card.dataset.categories?.split(',') || []; // Assuming categories are stored as comma-separated string
+
+            const matchesQuery = title.includes(query) || description.includes(query);
+            const matchesType = (type === 'ebook' && showEbook) || (type === 'hardcopy' && showHardcopy);
+            const matchesCategory = !selectedCategory || categories.includes(selectedCategory);
+            console.log(categories)
+            console.log(title, matchesCategory)
+
+            if (matchesQuery && (showEbook || showHardcopy) && matchesType && matchesCategory) {
+                card.style.display = ""; // Show the card
+                visibleCount++;
+            } else {
+                card.style.display = "none"; // Hide the card
+            }
+        });
+    }
+    searchInput.addEventListener("input", updateBookVisibility);
+    filterEbookCheckbox.addEventListener("change", updateBookVisibility);
+    filterHardcopyCheckbox.addEventListener("change", updateBookVisibility);
+
+    applyCategoryFilterButton.addEventListener('click', function () {
+        updateBookVisibility(); // Trigger the update based on selected category
+        const categoriesModal = new bootstrap.Modal(document.getElementById('categoriesModal'));
+        categoriesModal.hide(); // Hide the modal after applying filter
+    });
+    applyClearCategoryFilterButton.addEventListener('click', function () {
+        document.querySelector('input[name="category"]:checked').checked = false;
+
+        updateBookVisibility(); // Trigger the update based on selected category
+
+        const categoriesModal = new bootstrap.Modal(document.getElementById('categoriesModal'));
+        categoriesModal.hide(); // Hide the modal after applying filter
+    });
+    // Initialize the visibility on page load
+    updateBookVisibility();
+});
+
 </script>
+<script>
+document.getElementById('applyCategoryFilter').addEventListener('click', function () {
+  const selectedCategory = document.querySelector('#categoriesModal .form-check-input:checked').value;
+  
+  // Create a hidden input for the selected category
+  const form = document.querySelector('form[action="/new"]');
+  const input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = 'category';
+  input.value = selectedCategory;
+  form.appendChild(input);
+  
+  // Close the modal
+  const categoriesModal = new bootstrap.Modal(document.getElementById('categoriesModal'));
+  categoriesModal.hide();
+});
+
+
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const typeOfSelect = document.getElementById('typeOf');
+    const ebookLinkContainer = document.getElementById('ebookLinkContainer');
+    
+    typeOfSelect?.addEventListener('change', function() {
+      if (this.value === 'ebook') {
+        ebookLinkContainer.style.display = 'block'; // Show the eBook link field
+      } else {
+        ebookLinkContainer.style.display = 'none'; // Hide the eBook link field
+      }
+    });
+  });
+</script>
+
 <style>
   .container-fluid {
     padding: 1rem; /* Optional: Adjust padding as needed */
@@ -295,6 +360,12 @@ document.addEventListener("DOMContentLoaded", function () {
     color: #333;
     text-align: center; /* Center text horizontally */
   }
+  .carousel-item img {
+  max-height: 500px;
+  object-fit: contain; /* Ensures the image scales proportionally */
+  width: auto;
+  margin: 0 auto; /* Centers the image */
+}
 
   .card-quantity {
     font-size: 0.85rem;
@@ -322,6 +393,15 @@ document.addEventListener("DOMContentLoaded", function () {
     line-height: 15rem; /* Same as the height for vertical centering */
     color: #999; /* Light color for any placeholder text */
   }
+  .categories {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  flex-wrap: wrap; /* Allow wrapping to a new line if needed */
+}
+  .badge {
+  margin: 0 5px 5px 0;
+}
+
 </style>
 
 

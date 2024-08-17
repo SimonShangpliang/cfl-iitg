@@ -11,6 +11,102 @@
   <button class="btn btn-outline-primary" id="showAuthors">Filter</button>
   
   <button class="btn btn-outline-primary" id="showSortDialog" style="margin-left: 0.5rem;">Sort</button>
+  <button class="btn btn-outline-primary" id="showCategories" data-bs-toggle="modal" data-bs-target="#categoriesModal" style="margin-left: 0.5rem;">Categories</button>
+  <div class="form-check-group" style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" id="filterEbook" checked />
+      <label class="form-check-label" for="filterEbook">
+        eBook
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" id="filterHardcopy" checked />
+      <label class="form-check-label" for="filterHardcopy">
+        Hardcopy
+      </label>
+    </div>
+  </div>
+  
+</div>
+<div class="modal fade" id="categoriesModal" tabindex="-1" aria-labelledby="categoriesModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="categoriesModalLabel">Categories</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="category" id="filterGospel" value="Gospel" />
+              <label class="form-check-label" for="filterGospel">Gospel</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="category" id="filterNewBelievers" value="New believers" />
+              <label class="form-check-label" for="filterNewBelievers">New Believers</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="category" id="filterGeneral" value="General" />
+              <label class="form-check-label" for="filterGeneral">General</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="category" id="filterChurch" value="Church" />
+              <label class="form-check-label" for="filterChurch">Church</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="category" id="filterBibleStudy" value="Bible study" />
+              <label class="form-check-label" for="filterBibleStudy">Bible Study</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="category" id="filterChrist" value="Christ" />
+              <label class="form-check-label" for="filterChrist">Christ</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="category" id="filterCross" value="Cross" />
+              <label class="form-check-label" for="filterCross">Cross</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="category" id="filterFaith" value="Faith" />
+              <label class="form-check-label" for="filterFaith">Faith</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="category" id="filterLetters" value="Letters" />
+              <label class="form-check-label" for="filterLetters">Letters</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="category" id="filterMinistry" value="Ministry" />
+              <label class="form-check-label" for="filterMinistry">Ministry</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="category" id="filterOvercomers" value="Overcomers" />
+              <label class="form-check-label" for="filterOvercomers">Overcomers</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="category" id="filterProphetic" value="Prophetic" />
+              <label class="form-check-label" for="filterProphetic">Prophetic</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="category" id="filterRestoration" value="Restoration" />
+              <label class="form-check-label" for="filterRestoration">Restoration</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="category" id="filterRevelation" value="Revelation" />
+              <label class="form-check-label" for="filterRevelation">Revelation</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="category" id="filterSuffering" value="Suffering" />
+              <label class="form-check-label" for="filterSuffering">Suffering</label>
+            </div>
+          </div>
+          
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="applyClearCategoryFilter"  data-bs-dismiss="modal">Clear Filter</button>
+            <button type="button" class="btn btn-success" id="applyCategoryFilter"  data-bs-dismiss="modal">Apply</button>
+
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+          </div>
+      </div>
+  </div>
 </div>
 <div class="modal fade" id="authorsModal" tabindex="-1" aria-labelledby="authorsModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -69,30 +165,37 @@
 <div class="container-fluid d-flex flex-wrap justify-content-evenly">
   <% if (Array.isArray(books)) { %> 
     <% books.forEach(book => { %>
-      <div class="card-body mb-2 me-2">
+      <div class="card-body mb-2 me-2" data-type="<%= book.typeOf %>"  data-categories="<%= book.categories ? book.categories.join(',') : '' %>">
         <a href="/bookDetails/<%= book._id %>" class="btn btn-light">
           <% if (book.imagesUrl && book.imagesUrl.length > 0) { %>
             <img class="card-img" src="<%= book.imagesUrl[0] %>" alt="<%= book.name %>">
           <% } else { %>
-           
-<div class="default-image">
-  <span>No Image</span> <!-- Optional: Add text or icon if needed -->
-</div>
+            <div class="default-image">
+              <span>No Image</span> <!-- Optional: Add text or icon if needed -->
+            </div>
           <% } %>
         </a>
-        <div class="card-body">
+        <div class="card-content">
           <h5 class="card-title">
             <%= book.name %> <br />
             by <%= book.author %>
           </h5>
-          <div class="card-text card-quantity">
-            Qty: <%= book.quantity %>
+          <!-- <div class="card-text card-quantity">
+            Quantity: <%= book.quantity %>
+          </div> -->
+          <div class="categories mb-2">
+            <% if (Array.isArray(book.categories) && book.categories.length > 0) { %>
+              <% book.categories.forEach(cat => { %>
+                <span class="badge bg-secondary"><%= cat %></span>
+              <% }) %>
+            <% } %>
           </div>
           <div class="card-text card-desc">
             <%= book.desc %>
           </div>
         </div>
       </div>
+      
     <% }) %> 
   <% } else { %>
     <p>No books available</p>

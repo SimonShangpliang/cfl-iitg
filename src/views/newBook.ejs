@@ -14,7 +14,7 @@
     />
   </div>
   <div class="mb-3">
-    <label for="contributor" class="form-label">contributor</label>
+    <label for="contributor" class="form-label">Contributor</label>
     <input
       type="text"
       class="form-control"
@@ -33,7 +33,7 @@
       required
     ></textarea>
   </div>
-  <div class="mb-3">
+  <div class="mb-3" id="quantityContainer">
     <label for="quantity" class="form-label">Quantity</label>
     <input
       type="number"
@@ -44,13 +44,113 @@
     />
   </div>
   <div class="mb-3">
+    <label class="form-label">Categories</label>
+  
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="categories[]" value="Gospel" id="categoryGospel">
+      <label class="form-check-label" for="categoryGospel">Gospel</label>
+    </div>
+  
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="categories[]" value="New believers" id="categoryNewBelievers">
+      <label class="form-check-label" for="categoryNewBelievers">New believers</label>
+    </div>
+  
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="categories[]" value="General" id="categoryGeneral">
+      <label class="form-check-label" for="categoryGeneral">General</label>
+    </div>
+  
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="categories[]" value="Church" id="categoryChurch">
+      <label class="form-check-label" for="categoryChurch">Church</label>
+    </div>
+  
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="categories[]" value="Bible study" id="categoryBibleStudy">
+      <label class="form-check-label" for="categoryBibleStudy">Bible study</label>
+    </div>
+  
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="categories[]" value="Christ" id="categoryChrist">
+      <label class="form-check-label" for="categoryChrist">Christ</label>
+    </div>
+  
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="categories[]" value="Cross" id="categoryCross">
+      <label class="form-check-label" for="categoryCross">Cross</label>
+    </div>
+  
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="categories[]" value="Faith" id="categoryFaith">
+      <label class="form-check-label" for="categoryFaith">Faith</label>
+    </div>
+  
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="categories[]" value="Letters" id="categoryLetters">
+      <label class="form-check-label" for="categoryLetters">Letters</label>
+    </div>
+  
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="categories[]" value="Ministry" id="categoryMinistry">
+      <label class="form-check-label" for="categoryMinistry">Ministry</label>
+    </div>
+  
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="categories[]" value="Overcomers" id="categoryOvercomers">
+      <label class="form-check-label" for="categoryOvercomers">Overcomers</label>
+    </div>
+  
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="categories[]" value="Prophetic" id="categoryProphetic">
+      <label class="form-check-label" for="categoryProphetic">Prophetic</label>
+    </div>
+  
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="categories[]" value="Restoration" id="categoryRestoration">
+      <label class="form-check-label" for="categoryRestoration">Restoration</label>
+    </div>
+  
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="categories[]" value="Revelation" id="categoryRevelation">
+      <label class="form-check-label" for="categoryRevelation">Revelation</label>
+    </div>
+  
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="categories[]" value="Suffering" id="categorySuffering">
+      <label class="form-check-label" for="categorySuffering">Suffering</label>
+    </div>
+  
+  </div>
+  
+  
+  
+  <div class="mb-3">
+    <label for="typeOf" class="form-label">Type of Book</label>
+    <select class="form-control" id="typeOf" name="typeOf" required>
+      <option value="hardcopy">Hardcopy</option>
+      <option value="ebook">eBook</option>
+    </select>
+  </div>
+
+  <div class="mb-3">
     <label for="imagesUrl" class="form-label">Image URL</label>
     <input
       type="file"
       id="imagesUrl"
       name="imagesUrl"
-      accept="images/*"
+      accept="image/*"
       multiple
+    />
+  </div>
+  <div class="mb-3" id="ebookLinkContainer" style="display: none;">
+    <label for="ebookLink" class="form-label">eBook Link</label>
+    <input
+      type="url"
+      class="form-control"
+      id="ebookLink"
+      name="ebookLink"
+      placeholder="https://example.com/ebook"
     />
   </div>
   <button type="submit" class="btn btn-primary">Add Book</button>

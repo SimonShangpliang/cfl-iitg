@@ -92,26 +92,37 @@ export default class BooksRepository {
     }
   }
 
-  async updateBook(book) {
+  async  updateBook(book) {
     try {
       const db = getDB();
       const collection = db.collection("books");
-      collection.updateOne(
+  
+      // Build the update object
+      const updateData = {
+        name: book.name,
+        author: book.author,
+        contributor: book.contributor,
+        desc: book.desc,
+        quantity: book.quantity,
+        categories: book.categories,
+        typeOf: book.typeOf,
+        ebookLink: book.ebookLink, // Add eBook link if applicable
+        // Handle images if necessary
+        // You might need additional logic to process and store image URLs
+      };
+      console.log("update data",updateData)
+      // Update the book
+      await collection.updateOne(
         { _id: book._id },
-        {
-          $set: {
-            name: book.name,
-            author: book.author,
-            contributor: book.contributor,
-            quantity: book.quantity,
-            requests: book.requests,
-          },
-        }
+        { $set: updateData }
       );
+  
     } catch (err) {
-      return err;
+      console.error(err);
+      throw err;
     }
   }
+  
 
   async deleteBook(bookId) {
     try {

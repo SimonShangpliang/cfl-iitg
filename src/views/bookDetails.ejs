@@ -1,125 +1,136 @@
 <% if(errMessage) {%>
-<div class="alert alert-danger" role="alert"><%= errMessage %></div>
-<% } %>
-<!--  -->
-<% if(book){ %>
-<div class="container">
-  <div id="carouselExampleIndicators" class="carousel slide">
-    <div class="carousel-indicators">
-      <% book.imagesUrl.forEach((imageUrl,index)=>{ %>
+  <div class="alert alert-danger" role="alert"><%= errMessage %></div>
+  <% } %>
+  <!--  -->
+  <% if(book){ %>
+  <div class="container">
+    <div id="carouselExampleIndicators" class="carousel slide">
+      <div class="carousel-indicators">
+        <% book.imagesUrl.forEach((imageUrl,index)=>{ %>
+        <button
+          type="button"
+          data-bs-target="#carouselExampleIndicators"
+          data-bs-slide-to="<%=index%>"
+          class="<%= index === 0 ? 'active' : '' %>"
+          aria-current="<%= index==0?'true':'' %>"
+          aria-label="Slide <%= index+1 %>"
+        ></button>
+        <% }) %>
+      </div>
+      <div class="carousel-inner">
+        <% book.imagesUrl.forEach((imageUrl,index)=>{ %>
+        <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+          <img src="<%=imageUrl %>" class="d-block w-100" alt="..." />
+        </div>
+        <% }) %>
+      </div>
       <button
+        class="carousel-control-prev"
         type="button"
         data-bs-target="#carouselExampleIndicators"
-        data-bs-slide-to="<%=index%>"
-        class="<%= index === 0 ? 'active' : '' %>"
-        aria-current="<%= index==0?'true':'' %>"
-        aria-label="Slide <%= index+1 %>"
-      ></button>
-      <% }) %>
+        data-bs-slide="prev"
+      >
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button
+        class="carousel-control-next"
+        type="button"
+        data-bs-target="#carouselExampleIndicators"
+        data-bs-slide="next"
+      >
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
     </div>
-    <div class="carousel-inner">
-      <% book.imagesUrl.forEach((imageUrl,index)=>{ %>
-      <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
-        <img src="<%=imageUrl %>" class="d-block w-100" alt="..." />
+    <div class="pt-4">
+      <h3><%=book.name%> by <%=book.author%></h3>
+  
+      <div>
+        <% book.categories.forEach(cat => { %>
+          <span class="badge bg-secondary"><%= cat %></span>
+        <% }) %>
       </div>
-      <% }) %>
+      <h4>Description</h4>
+      <% if (book.typeOf === 'ebook') { %>
+        <a href="<%= book.ebookLink %>" class="btn btn-success">Download eBook</a>
+      <% } %>
+      <p><%=book.desc%></p>
+      <a class="btn btn-secondary">Qty: <%= book.quantity%></a>
+  
+      <a
+        href="/issueBook/<%= book._id %>"
+        class="btn btn-<%= requested ? 'dark' : 'primary' %>"
+      >
+        <%= requested?'PullBack':'Request' %>
+      </a>
+      <!--  -->
+      <% if(locals.userEmail=="lalhriemsangfaihriemsang@gmail.com"){ %>
+      <a href="/updateBook/<%= book._id %>" class="btn btn-warning"> Update </a>
+      <a href="/deleteBook/<%= book._id %>" class="btn btn-danger"> Delete </a>
+      <% } %>
+      <!--  -->
+      <% if(book.requests){ %> <% book.requests.forEach(request=>{ %> <%
+      if(locals.userEmail=="lalhriemsangfaihriemsang@gmail.com"){ %>
+  
+      <div
+        class="alert <%= request.isAccepted ? 'alert-success' : 'alert-primary' %>"
+        role="alert"
+      >
+        Requested by <%= request.name %>
+        <div class="mt-2">
+          <% if (request.isAccepted) { %>
+          <!-- <span class="btn btn-success" style="pointer-events: none; opacity: 0.6;">Accepted</span> -->
+          to be returned on <%= request.daysLeft %> days
+          <a
+            href="/update-request-status?bookId=<%= book._id %>&requestName=<%= request.name %>&isAccepted=false"
+            class="btn btn-danger"
+          >
+            Returned
+          </a>
+          <% } else { %>
+  
+          <a
+            href="/update-request-status?bookId=<%= book._id %>&requestName=<%= request.name %>&isAccepted=true"
+            class="btn btn-success"
+          >
+            Accept
+          </a>
+          <a
+            href="/update-request-status?bookId=<%= book._id %>&requestName=<%= request.name %>&isAccepted=false"
+            class="btn btn-danger"
+          >
+            Reject
+          </a>
+          <% } %>
+        </div>
+      </div>
+      <% } %> <% if(locals.userEmail!="lalhriemsangfaihriemsang@gmail.com"){ %>
+  
+      <div
+        class="alert <%= request.isAccepted ? 'alert-success' : 'alert-primary' %>"
+        role="alert"
+      >
+        Issued to <%= request.name %>, to be returned in <%= request.daysLeft %>
+        days
+        <div class="mt-2">
+          <% if (request.isAccepted) { %>
+          <!-- <span class="btn btn-success" style="pointer-events: none; opacity: 0.6;">Accepted</span> -->
+          <span class="btn btn-success" style="pointer-events: none; opacity: 0.6"
+            >Accepted</span
+          >
+  
+          <% } else { %>
+          <span class="btn btn-warning" style="pointer-events: none; opacity: 0.6"
+            >Waiting to be Accepted</span
+          >
+  
+          <% } %>
+        
+        </div>
+      </div>
+      <% } %> <% })%> <% }%>
     </div>
-    <button
-      class="carousel-control-prev"
-      type="button"
-      data-bs-target="#carouselExampleIndicators"
-      data-bs-slide="prev"
-    >
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Previous</span>
-    </button>
-    <button
-      class="carousel-control-next"
-      type="button"
-      data-bs-target="#carouselExampleIndicators"
-      data-bs-slide="next"
-    >
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Next</span>
-    </button>
   </div>
-  <div class="pt-4">
-    <h3><%=book.name%> by <%=book.author%></h3>
-    <h4>Description</h4>
-    <p><%=book.desc%></p>
-    <a class="btn btn-secondary">Qty: <%= book.quantity%></a>
-
-    <a
-      href="/issueBook/<%= book._id %>"
-      class="btn btn-<%= requested ? 'dark' : 'primary' %>"
-    >
-      <%= requested?'PullBack':'Request' %>
-    </a>
-    <!--  -->
-    <% if(locals.userEmail=="lalhriemsangfaihriemsang@gmail.com"){ %>
-    <a href="/updateBook/<%= book._id %>" class="btn btn-warning"> Update </a>
-    <a href="/deleteBook/<%= book._id %>" class="btn btn-danger"> Delete </a>
-    <% } %>
-    <!--  -->
-    <% if(book.requests){ %> <% book.requests.forEach(request=>{ %> <%
-    if(locals.userEmail=="lalhriemsangfaihriemsang@gmail.com"){ %>
-
-    <div
-      class="alert <%= request.isAccepted ? 'alert-success' : 'alert-primary' %>"
-      role="alert"
-    >
-      Requested by <%= request.name %>
-      <div class="mt-2">
-        <% if (request.isAccepted) { %>
-        <!-- <span class="btn btn-success" style="pointer-events: none; opacity: 0.6;">Accepted</span> -->
-        to be returned on <%= request.daysLeft %> days
-        <a
-          href="/update-request-status?bookId=<%= book._id %>&requestName=<%= request.name %>&isAccepted=false"
-          class="btn btn-danger"
-        >
-          Returned
-        </a>
-        <% } else { %>
-
-        <a
-          href="/update-request-status?bookId=<%= book._id %>&requestName=<%= request.name %>&isAccepted=true"
-          class="btn btn-success"
-        >
-          Accept
-        </a>
-        <a
-          href="/update-request-status?bookId=<%= book._id %>&requestName=<%= request.name %>&isAccepted=false"
-          class="btn btn-danger"
-        >
-          Reject
-        </a>
-        <% } %>
-      </div>
-    </div>
-    <% } %> <% if(locals.userEmail!="lalhriemsangfaihriemsang@gmail.com"){ %>
-
-    <div
-      class="alert <%= request.isAccepted ? 'alert-success' : 'alert-primary' %>"
-      role="alert"
-    >
-      Issued to <%= request.name %>, to be returned in <%= request.daysLeft %>
-      days
-      <div class="mt-2">
-        <% if (request.isAccepted) { %>
-        <!-- <span class="btn btn-success" style="pointer-events: none; opacity: 0.6;">Accepted</span> -->
-        <span class="btn btn-success" style="pointer-events: none; opacity: 0.6"
-          >Accepted</span
-        >
-
-        <% } else { %>
-        <span class="btn btn-warning" style="pointer-events: none; opacity: 0.6"
-          >Waiting to be Accepted</span
-        >
-
-        <% } %>
-      </div>
-    </div>
-    <% } %> <% })%> <% }%>
-  </div>
-</div>
-<%}%>
+  <%}%>
+  
