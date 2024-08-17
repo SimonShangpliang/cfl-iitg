@@ -79,7 +79,8 @@
     <% } %>
     <!--  -->
     <% if(book.requests){ %> <% book.requests.forEach(request=>{ %> <%
-    if(locals.userEmail=="lalhriemsangfaihriemsang@gmail.com"){ %>
+    if(locals.userEmail=="lalhriemsangfaihriemsang@gmail.com" ||
+    locals.userEmail=="gvp1992@gmail.com"){ %>
 
     <div
       class="alert <%= request.isAccepted ? 'alert-success' : 'alert-primary' %>"
