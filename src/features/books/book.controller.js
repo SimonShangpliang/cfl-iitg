@@ -8,10 +8,9 @@ import BooksRepository from "./book.repository.js";
 import nodemailer from "nodemailer";
 
 const bucketName = process.env.BUCKET_NAME;
-const bucketRegion = process.env.BUCKET_REGION ;
+const bucketRegion = process.env.BUCKET_REGION;
 const accessKey = process.env.ACCESS_KEY;
-const secretAccessKey =
-  process.env.SECRET_ACCESS_KEY ;
+const secretAccessKey = process.env.SECRET_ACCESS_KEY;
 
 const s3 = new S3Client({
   credentials: {
@@ -25,20 +24,17 @@ export default class BookController {
   constructor() {
     this.bookRepository = new BooksRepository();
   }
-  
 
   async getUniqueAuthors(req, res) {
     try {
       const authors = await this.bookRepository.getUniqueAuthors();
-      console.log(authors)
+      console.log(authors);
       // res.status(200).render("authors", authors);
       res.status(200).json(authors); // Send JSON response
-
     } catch (err) {
       // res.status(400).render("authors", {
       //   authors: []      });
-        res.status(500).json({ error: err.message }); // Send JSON response with error
-
+      res.status(500).json({ error: err.message }); // Send JSON response with error
     }
   }
 
@@ -81,12 +77,17 @@ export default class BookController {
               (r.returnDate - currentDate) / (1000 * 60 * 60 * 24)
             );
 
-            if (r.daysLeft <= 3 && r.isAccepted)
-              mailReaders.push({ email: r.email, days: r.daysLeft });
+            if (r.daysLeft == 1 && r.isAccepted && !r.mailed)
+              mailReaders.push({
+                email: r.email,
+                days: r.daysLeft,
+                requestIndex: index,
+              });
             if (r.daysLeft <= 0) removeIndexes.push(index);
           });
 
           mailReaders.forEach(async (reader) => {
+            book.requests[reader.requestIndex].mailed = true;
             await this.sendEmail(reader.email, reader.days);
           });
 
@@ -130,11 +131,23 @@ export default class BookController {
   }
 
   async addBook(req, res) {
-    const { name, author, contributor, desc, quantity, typeOf, ebookLink, categories } = req.body;
+    const {
+      name,
+      author,
+      contributor,
+      desc,
+      quantity,
+      typeOf,
+      ebookLink,
+      categories,
+    } = req.body;
     const bookId = `${author}-${name}`;
     const uniqueKeys = req.files.map((file) => file.originalname);
-    const imagesUrl = uniqueKeys.map((uniqueKey) => `https://${bucketName}.s3.${bucketRegion}.amazonaws.com/${uniqueKey}`);
-  
+    const imagesUrl = uniqueKeys.map(
+      (uniqueKey) =>
+        `https://${bucketName}.s3.${bucketRegion}.amazonaws.com/${uniqueKey}`
+    );
+
     const bookFound = await this.bookRepository.findBook(bookId);
     if (!bookFound) {
       try {
@@ -150,7 +163,7 @@ export default class BookController {
           ebookLink,
           categories // This is the array of selected categories
         );
-  
+
         // Upload files to S3
         req.files.map(async (file, index) => {
           const params = {
@@ -162,7 +175,7 @@ export default class BookController {
           const command = new PutObjectCommand(params);
           await s3.send(command);
         });
-  
+
         console.log(imagesUrl);
         await this.bookRepository.addBook(book);
       } catch (err) {
@@ -173,10 +186,10 @@ export default class BookController {
         });
       }
     }
-  
+
     return await this.getAll(req, res);
   }
-  
+
   async getUpdateBookForm(req, res) {
     const bookId = req.params.bookId;
     const book = await this.bookRepository.findBook(bookId);
@@ -194,54 +207,61 @@ export default class BookController {
   }
 
   async updateBook(req, res) {
-    const { name, author, contributor, desc, quantity, categories, typeOf, ebookLink } = req.body;
+    const {
+      name,
+      author,
+      contributor,
+      desc,
+      quantity,
+      categories,
+      typeOf,
+      ebookLink,
+    } = req.body;
     const bookId = req.params.bookId;
-    console.log("body",name,author)
+    console.log("body", name, author);
     try {
-        // Find the existing book
-        const bookFound = await this.bookRepository.findBook(bookId);
-        if (!bookFound) {
-            console.log("book not found");
-            return res.redirect('/404'); // Redirect to a 404 page or error page
-        }
+      // Find the existing book
+      const bookFound = await this.bookRepository.findBook(bookId);
+      if (!bookFound) {
+        console.log("book not found");
+        return res.redirect("/404"); // Redirect to a 404 page or error page
+      }
 
-        // Update book details
-        if (name) bookFound.name = name;
-        if (author) bookFound.author = author;
-        if (contributor) bookFound.contributor = contributor;
-        if (desc) bookFound.desc = desc;
-        if (quantity) bookFound.quantity = quantity;
+      // Update book details
+      if (name) bookFound.name = name;
+      if (author) bookFound.author = author;
+      if (contributor) bookFound.contributor = contributor;
+      if (desc) bookFound.desc = desc;
+      if (quantity) bookFound.quantity = quantity;
 
-        // Update categories
-        if (categories && Array.isArray(categories)) {
-            bookFound.categories = categories;
-        }
+      // Update categories
+      if (categories && Array.isArray(categories)) {
+        bookFound.categories = categories;
+      }
 
-        // Update type of book
-        if (typeOf) bookFound.typeOf = typeOf;
+      // Update type of book
+      if (typeOf) bookFound.typeOf = typeOf;
 
-        // Update eBook link
-        if (typeOf === 'ebook' && ebookLink) {
-            bookFound.ebookLink = ebookLink;
-        } else if (typeOf !== 'ebook') {
-            bookFound.ebookLink = null; // Clear eBook link if type is not 'ebook'
-        }
+      // Update eBook link
+      if (typeOf === "ebook" && ebookLink) {
+        bookFound.ebookLink = ebookLink;
+      } else if (typeOf !== "ebook") {
+        bookFound.ebookLink = null; // Clear eBook link if type is not 'ebook'
+      }
 
-        // Handle images
-        // (Assuming that image handling is done elsewhere, such as a file upload handler)
+      // Handle images
+      // (Assuming that image handling is done elsewhere, such as a file upload handler)
 
-        // Save the updated book
-        await this.bookRepository.updateBook(bookFound);
+      // Save the updated book
+      await this.bookRepository.updateBook(bookFound);
 
-        // Redirect to the book details page
-        res.redirect(`/bookDetails/${bookId}`);
+      // Redirect to the book details page
+      res.redirect(`/bookDetails/${bookId}`);
     } catch (err) {
-        console.error("Error updating book:", err);
-        res.redirect(`/bookDetails/${bookId}?error=updateFailed`);
+      console.error("Error updating book:", err);
+      res.redirect(`/bookDetails/${bookId}?error=updateFailed`);
     }
-}
-
-
+  }
 
   async deleteBook(req, res) {
     const bookId = req.params.bookId;
@@ -354,7 +374,15 @@ export default class BookController {
       currentDate.getTime() + 30 * 24 * 60 * 60 * 1000
     );
     var isAccepted = false;
-    book.requests.push({ name, email, daysLeft, returnDate, isAccepted });
+    let mailed = false;
+    book.requests.push({
+      name,
+      email,
+      daysLeft,
+      returnDate,
+      isAccepted,
+      mailed,
+    });
     await this.bookRepository.updateBook(book);
     res.render("bookDetails", {
       errMessage: null,
@@ -376,8 +404,8 @@ export default class BookController {
     const mailOptions = {
       from: process.env.BOOK_MANAGER_EMAIL,
       to: recipientMail,
-      subject: `Christian Felllowship Book Return Due`,
-      text: `Return book due in ${days} days`,
+      subject: `Christian Fellowship Book Return Due`,
+      text: `Please return borrowed book by tommorow`,
     };
 
     try {
