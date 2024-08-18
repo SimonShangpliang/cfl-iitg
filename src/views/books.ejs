@@ -219,10 +219,14 @@
           <p class="card-text" style="margin-bottom: 0.1rem;" >
             <i>by <%= book.author %></i>
           </p>
+          <% if (book.numOfPages>0) { %>
           <div style="text-align: center;">
 
+            
           <p  style="margin-top: 0.1rem; margin-bottom: 0.2rem;"><b>Number of Pages: </b><span class="card-pages"><%= book.numOfPages %></span></p>
 </div>
+<% } %>
+
           <!-- <div class="card-text card-quantity">
             Quantity: <%= book.quantity %>
           </div> -->
