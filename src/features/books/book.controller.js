@@ -284,14 +284,16 @@ export default class BookController {
     // Delete old images
     const uniqueKeys = book.uniqueKeys;
 
-    for (const uniqueKey of uniqueKeys) {
-      const params = {
-        Bucket: bucketName,
-        Key: uniqueKey,
-      };
+    if (uniqueKeys) {
+      for (const uniqueKey of uniqueKeys) {
+        const params = {
+          Bucket: bucketName,
+          Key: uniqueKey,
+        };
 
-      const command = new DeleteObjectCommand(params);
-      await s3.send(command);
+        const command = new DeleteObjectCommand(params);
+        await s3.send(command);
+      }
     }
 
     // Upload new images and update the book record
