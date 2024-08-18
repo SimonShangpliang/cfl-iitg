@@ -41,7 +41,7 @@ export default class BookController {
   async getAll(req, res) {
     try {
       const books = await this.bookRepository.getAllBooks();
-      console.log(books)
+      console.log(books);
       // console.log(books);
       if (!books)
         return res.status(400).render("books", {
@@ -132,10 +132,24 @@ export default class BookController {
   }
 
   async addBook(req, res) {
-    const { name, author, contributor, desc, quantity, typeOf, ebookLink, categories,numOfPages,year } = req.body;
+    const {
+      name,
+      author,
+      contributor,
+      desc,
+      quantity,
+      typeOf,
+      ebookLink,
+      categories,
+      numOfPages,
+      year,
+    } = req.body;
     const bookId = `${author}-${name}`;
     const uniqueKeys = req.files.map((file) => file.originalname);
-    const imagesUrl = uniqueKeys.map((uniqueKey) => `https://${bucketName}.s3.${bucketRegion}.amazonaws.com/${uniqueKey}`);
+    const imagesUrl = uniqueKeys.map(
+      (uniqueKey) =>
+        `https://${bucketName}.s3.${bucketRegion}.amazonaws.com/${uniqueKey}`
+    );
     const bookFound = await this.bookRepository.findBook(bookId);
     if (!bookFound) {
       try {
@@ -152,7 +166,6 @@ export default class BookController {
           categories,
           Number(numOfPages), // This is the array of selected categories,
           Number(year)
-
         );
 
         // Upload files to S3
@@ -166,7 +179,7 @@ export default class BookController {
           const command = new PutObjectCommand(params);
           await s3.send(command);
         });
-  
+
         await this.bookRepository.addBook(book);
       } catch (err) {
         return res.status(400).render("books", {
@@ -197,51 +210,69 @@ export default class BookController {
   }
 
   async updateBook(req, res) {
-    const { name, author, contributor, desc, quantity, numberOfPages, categories, typeOf, ebookLink,year } = req.body;
+    const {
+      name,
+      author,
+      contributor,
+      desc,
+      quantity,
+      numberOfPages,
+      categories,
+      typeOf,
+      ebookLink,
+      year,
+    } = req.body;
     const bookId = req.params.bookId;
-  
+
     try {
       // Find the existing book
       const bookFound = await this.bookRepository.findBook(bookId);
       if (!bookFound) {
         console.log("Book not found");
-        return res.redirect('/404'); // Redirect to a 404 page or error page
+        return res.redirect("/404"); // Redirect to a 404 page or error page
       }
-  
+
       // Update book details
       if (name) bookFound.name = name;
       if (author) bookFound.author = author;
       if (contributor) bookFound.contributor = contributor;
       if (desc) bookFound.desc = desc;
       if (numberOfPages) bookFound.numOfPages = numberOfPages;
-      if(year)bookFound.year=year;
+      if (year) bookFound.year = year;
       // Update typeOf and handle related fields
       if (typeOf && Array.isArray(typeOf)) {
         bookFound.typeOf = typeOf;
-  
+
         // Handle quantity for hardcopy
-        if (typeOf.includes('hardcopy')) {
+        if (typeOf.includes("hardcopy")) {
           if (quantity) bookFound.quantity = quantity;
         } else {
           bookFound.quantity = null; // or any default value
         }
-  
+
         // Handle ebook link for ebook
-        if (typeOf.includes('ebook')) {
-          bookFound.ebookLink = ebookLink || '';
+        if (typeOf.includes("ebook")) {
+          bookFound.ebookLink = ebookLink || "";
         } else {
           bookFound.ebookLink = null;
         }
       }
-  
+
       // Update categories
       if (categories && Array.isArray(categories)) {
         bookFound.categories = categories;
       }
-  
+      // Update Images
+      const [newImagesUrl, newUniqueKeys] = await this.updateImages(
+        bookFound,
+        req.files
+      );
+      bookFound.imagesUrl = newImagesUrl;
+      bookFound.uniqueKeys = newUniqueKeys;
+
       // Save the updated book
       await this.bookRepository.updateBook(bookFound);
-  
+
       // Redirect to the book details page
       res.redirect(`/bookDetails/${bookId}`);
     } catch (err) {
@@ -249,9 +280,41 @@ export default class BookController {
       res.redirect(`/bookDetails/${bookId}?error=updateFailed`);
     }
   }
-  
-  
 
+  async updateImages(book, files) {
+    // book presence will have been checked by update book controller
+    // Delete old images
+    const uniqueKeys = book.uniqueKeys;
+
+    for (const uniqueKey of uniqueKeys) {
+      const params = {
+        Bucket: bucketName,
+        Key: uniqueKey,
+      };
+
+      const command = new DeleteObjectCommand(params);
+      await s3.send(command);
+    }
+
+    // Upload new images and update the book record
+    const newUniqueKeys = files.map((file) => file.originalname);
+    const newImagesUrl = newUniqueKeys.map(
+      (uniqueKey) =>
+        `https://${bucketName}.s3.${bucketRegion}.amazonaws.com/${uniqueKey}`
+    );
+    files.map(async (file, index) => {
+      const params = {
+        Bucket: bucketName,
+        Key: newUniqueKeys[index],
+        Body: file.buffer,
+        ContentType: file.mimetype,
+      };
+      const command = new PutObjectCommand(params);
+      await s3.send(command);
+    });
+
+    return [newImagesUrl, newUniqueKeys];
+  }
 
   async deleteBook(req, res) {
     const bookId = req.params.bookId;

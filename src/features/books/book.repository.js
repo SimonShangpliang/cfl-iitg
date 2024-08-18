@@ -14,32 +14,33 @@ export default class BooksRepository {
     try {
       const db = getDB();
       const collection = db.collection("books");
-  
+
       // Use aggregation to get unique author names
-      const authors = await collection.aggregate([
-        {
-          $group: {
-            _id: "$author" // Group by the `author` field
-          }
-        },
-        {
-          $project: {
-            _id: 0,
-            author: "$_id" // Rename the `_id` field to `author`
-          }
-        }
-      ]).toArray();
-  
+      const authors = await collection
+        .aggregate([
+          {
+            $group: {
+              _id: "$author", // Group by the `author` field
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+              author: "$_id", // Rename the `_id` field to `author`
+            },
+          },
+        ])
+        .toArray();
+
       // Map the result to get a list of author names
-      const authorList = authors.map(author => author.author);
-  console.log(authorList)
-    return authorList
+      const authorList = authors.map((author) => author.author);
+      console.log(authorList);
+      return authorList;
     } catch (err) {
-     return [];
+      return [];
     }
   }
-  
-  
+
   async getAllBooks() {
     try {
       const db = getDB();
@@ -51,7 +52,7 @@ export default class BooksRepository {
   }
   async updateRequestStatus(bookId, requestName, isAccepted) {
     try {
-      console.log(bookId, requestName, isAccepted)
+      console.log(bookId, requestName, isAccepted);
       const db = getDB();
       const collection = db.collection("books");
 
@@ -60,20 +61,20 @@ export default class BooksRepository {
         // If accepted, update the request status
         await collection.updateOne(
           { _id: bookId, "requests.name": requestName },
-          { 
-            $set: { 
-              "requests.$.isAccepted": isAccepted 
-            }
+          {
+            $set: {
+              "requests.$.isAccepted": isAccepted,
+            },
           }
         );
       } else {
         // If rejected, remove the request
         await collection.updateOne(
           { _id: bookId },
-          { 
-            $pull: { 
-              requests: { name: requestName } 
-            }
+          {
+            $pull: {
+              requests: { name: requestName },
+            },
           }
         );
       }
@@ -92,11 +93,11 @@ export default class BooksRepository {
     }
   }
 
-  async  updateBook(book) {
+  async updateBook(book) {
     try {
       const db = getDB();
       const collection = db.collection("books");
-  
+
       // Build the update object
       const updateData = {
         name: book.name,
@@ -107,25 +108,22 @@ export default class BooksRepository {
         categories: book.categories,
         typeOf: book.typeOf,
         ebookLink: book.ebookLink,
-        numOfPages:book.numOfPages,
-        year:book.year
-         // Add eBook link if applicable
+        numOfPages: book.numOfPages,
+        year: book.year,
+        // Add eBook link if applicable
         // Handle images if necessary
+        imagesUrl: book.imagesUrl,
+        uniqueKeys: book.uniqueKeys,
         // You might need additional logic to process and store image URLs
       };
-      console.log("update data",updateData)
+      console.log("update data", updateData);
       // Update the book
-      await collection.updateOne(
-        { _id: book._id },
-        { $set: updateData }
-      );
-  
+      await collection.updateOne({ _id: book._id }, { $set: updateData });
     } catch (err) {
       console.error(err);
       throw err;
     }
   }
-  
 
   async deleteBook(bookId) {
     try {
