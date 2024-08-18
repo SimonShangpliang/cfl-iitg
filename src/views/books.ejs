@@ -21,7 +21,7 @@
           </label>
         </div>
         <div class="form-check" style="margin-top: 0;">
-          <input class="form-check-input" type="checkbox" id="filterHardcopy" checked />
+          <input class="form-check-input" type="checkbox" id="filterHardcopy" />
           <label class="form-check-label" for="filterHardcopy">
             Hardcopy
           </label>
@@ -198,10 +198,12 @@
 <div class="container-fluid d-flex flex-wrap justify-content-evenly">
   <% if (Array.isArray(books)) { %> 
     <% books.forEach(book => { %>
+
+    
       <div class="card-body mb-2 me-2" data-type="<%= book.typeOf %>"  data-categories="<%= book.categories ? book.categories.join(',') : '' %>">
         <a href="/bookDetails/<%= book._id %>" class="btn btn-light">
           <% if (book.imagesUrl && book.imagesUrl.length > 0) { %>
-            <img class="card-img" src="<%= book.imagesUrl[0] %>" alt="<%= book.name %>">
+            <img id="bookImage" class="card-img" src="<%= book.imagesUrl[0] %>" alt="<%= book.name %>">
           <% } else { %>
             <div class="default-image">
               <div class="title"> <b><%= book.name %></b></div>
@@ -236,7 +238,11 @@
         </div>
       </div>
       
-    <% }) %> 
+
+
+    <% }) 
+    
+    %> 
   <% } else { %>
     <p>No books available</p>
   <% } %>

@@ -38,6 +38,9 @@ app.get("/new", jwtAuth, (req, res) => bookController.getNewBookForm(req, res));
 app.post("/new", jwtAuth, uploadFiles.array("imagesUrl", 10), (req, res) =>
   bookController.addBook(req, res)
 );
+app.get('/aboutUs', (req, res) => {
+  res.render('aboutUs');
+});
 app.get("/bookDetails/:bookId", jwtAuth, (req, res) =>
   bookController.getBook(req, res)
 );

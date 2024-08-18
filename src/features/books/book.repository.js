@@ -108,15 +108,15 @@ export default class BooksRepository {
         categories: book.categories,
         typeOf: book.typeOf,
         ebookLink: book.ebookLink,
-        numOfPages: book.numOfPages,
-        year: book.year,
-        // Add eBook link if applicable
+        numOfPages:book.numOfPages,
+        year:book.year,
+        requests:book.requests,
+         // Add eBook link if applicable
         // Handle images if necessary
         imagesUrl: book.imagesUrl,
-        uniqueKeys: book.uniqueKeys,
+        uniqueKeys: book.uniqueKeys
         // You might need additional logic to process and store image URLs
       };
-      console.log("update data", updateData);
       // Update the book
       await collection.updateOne({ _id: book._id }, { $set: updateData });
     } catch (err) {
