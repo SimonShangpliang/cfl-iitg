@@ -69,7 +69,7 @@
       <!-- Conditionally display eBook link -->
     
       <!-- Conditionally display quantity and request button -->
-      <% if (book && book.typeOf && book.typeOf.includes('hardcopy')) { %>
+      <% if (book && book.typeOf && book.typeOf.includes('hardcopy')&&locals.userEmail) { %>
         <button class="btn btn-<%= requested ? 'dark' : 'primary' %>" onclick="requestHardcopy('<%= book._id %>', '<%= requested %>')">
           <%= requested ? 'PullBack' : 'Request Hardcopy' %>
         </button>

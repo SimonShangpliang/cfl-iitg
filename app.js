@@ -68,6 +68,26 @@ app.delete('/deleteBook/:bookId', async (req, res) => {
   bookController.deleteBook(req, res)
 });
 
+app.get("/books-with-unaccepted-requests", async (req, res) => {
+  try {
+    // Fetch books with unaccepted requests
+    const books = await bookController.getBooksWithUnacceptedRequests(req, res);
+
+    // Render the EJS page with the list of books
+    if (books && books.length > 0) {
+      res.status(200).render("booksWithUnacceptedRequests", { books, error: null });
+    } else {
+      res.status(404).render("booksWithUnacceptedRequests", { books: [], error: "No books found with unaccepted requests" });
+    }
+  } catch (err) {
+    console.error(err);
+    if (!res.headersSent) {
+      res.status(500).render("booksWithUnacceptedRequests", { books: [], error: err.message });
+    }
+  }
+});
+
+
 
 app.get("/logout", jwtAuth, (req, res) => userController.logout(req, res));
 

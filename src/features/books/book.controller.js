@@ -61,6 +61,24 @@ export default class BookController {
       });
     }
   }
+ // In BookController.js
+async getBooksWithUnacceptedRequests(req, res) {
+  try {
+    // Fetch all books
+    const books = await this.bookRepository.getAllBooks();
+    if (!books) return [];
+
+    // Filter books with unaccepted requests
+    const booksWithUnacceptedRequests = books.filter(book =>
+      book.requests && book.requests.some(request => !request.isAccepted)
+    );
+console.log(booksWithUnacceptedRequests)
+    return booksWithUnacceptedRequests;
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to retrieve books with unaccepted requests");
+  }
+}
 
   async getBook(req, res) {
     const bookId = req.params.bookId;

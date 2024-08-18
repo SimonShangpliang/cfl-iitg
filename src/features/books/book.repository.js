@@ -70,6 +70,23 @@ export default class BooksRepository {
       return err;
     }
   }
+  // book.repository.js
+
+async getBooksWithUnacceptedRequests() {
+  try {
+    const db = getDB();
+    const collection = db.collection("books");
+    
+    // Find books where any request has isAccepted as false
+    const books = await collection.find({
+      "requests.isAccepted": false
+    }).toArray();
+    
+    return books;
+  } catch (err) {
+    return err;
+  }
+}
 
   async updateRequestStatus(bookId, requestName, isAccepted) {
     try {
