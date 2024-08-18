@@ -362,7 +362,7 @@ export default class BookController {
   async updateRequestBook(req, res) {
     const { bookId, requestName, isAccepted } = req.query;
     // Convert isAccepted to boolean if necessary
-    console.log(bookId,requestName,isAccepted)
+    console.log(bookId, requestName, isAccepted);
     const accepted = isAccepted === "true";
 
     try {
@@ -384,13 +384,13 @@ export default class BookController {
   async issueBook(req, res) {
     const bookId = req.params.bookId;
     const book = await this.bookRepository.findBook(bookId);
-console.log(bookId)
+    console.log(bookId);
     if (!book) return res.status(400).redirect(req.originalUrl);
 
     const name = req.session.userName;
     const email = req.session.userEmail;
     const issuedIndex = book.requests.findIndex((r) => r.name == name);
-console.log(name,email,issuedIndex,book)
+    console.log(name, email, issuedIndex, book);
     if (issuedIndex >= 0) {
       book.requests.splice(issuedIndex, 1);
       //  book.quantity += 1;
@@ -403,7 +403,7 @@ console.log(name,email,issuedIndex,book)
         requested: false,
       });
     }
-    console.log(book.quantity ,book.requests.length)
+    console.log(book.quantity, book.requests.length);
 
     if (book.quantity === book.requests.length) {
       return res.render("bookDetails", {
@@ -437,7 +437,7 @@ console.log(name,email,issuedIndex,book)
       isAccepted,
       mailed,
     });
-    console.log("pushed book")
+    console.log("pushed book");
     await this.bookRepository.updateBook(book);
     res.render("bookDetails", {
       errMessage: null,

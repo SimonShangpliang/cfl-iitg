@@ -50,6 +50,27 @@ export default class BooksRepository {
       return err;
     }
   }
+
+  async updateMailedStatus(bookId, requestName, mailed) {
+    try {
+      console.log(bookId, requestName, mailed);
+      const db = getDB();
+      const collection = db.collection("books");
+
+      // Update the mailed Status in request
+      await collection.updateOne(
+        { _id: bookId, "requests.name": requestName },
+        {
+          $set: {
+            "requests.$.mailed": mailed,
+          },
+        }
+      );
+    } catch (err) {
+      return err;
+    }
+  }
+
   async updateRequestStatus(bookId, requestName, isAccepted) {
     try {
       console.log(bookId, requestName, isAccepted);
@@ -108,16 +129,19 @@ export default class BooksRepository {
         categories: book.categories,
         typeOf: book.typeOf,
         ebookLink: book.ebookLink,
-        numOfPages:book.numOfPages,
-        year:book.year,
-        requests:book.requests,
-         // Add eBook link if applicable
+        numOfPages: book.numOfPages,
+        year: book.year,
+        requests: book.requests,
+        // Add eBook link if applicable
         // Handle images if necessary
-        imagesUrl: book.imagesUrl,
-        uniqueKeys: book.uniqueKeys
         // You might need additional logic to process and store image URLs
+        imagesUrl: book.imagesUrl,
+        uniqueKeys: book.uniqueKeys,
       };
-      // Update the book
+      // Update the books
+      book.requests.forEach(async (req) => {
+        await this.updateMailedStatus(book._id, req.name, req.mailed);
+      });
       await collection.updateOne({ _id: book._id }, { $set: updateData });
     } catch (err) {
       console.error(err);
