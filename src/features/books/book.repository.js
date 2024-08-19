@@ -97,7 +97,7 @@ export default class BooksRepository {
 
       const books = await collection
         .find({
-          "requests.isAccepted": { $in: [true, false] },
+          requests: { $exists: true, $not: { $size: 0 } },
         })
         .toArray();
 

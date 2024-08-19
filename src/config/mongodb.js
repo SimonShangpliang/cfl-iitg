@@ -28,7 +28,7 @@ async function checkDueDatesAndSendEmails() {
     console.log("Updating return days and checking Due dates for emails");
     const bookRepository = new BooksRepository();
 
-    const books = await bookRepository.getBooksWithUnacceptedRequests();
+    const books = await bookRepository.getBooksWithNonEmptyRequests();
 
     if (!books) console.log("Books Not present");
     else console.log(books);
