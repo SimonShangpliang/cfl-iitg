@@ -25,6 +25,7 @@ export const getDB = () => {
 
 async function checkDueDatesAndSendEmails() {
   try {
+    console.log("Updating return days and checking Due dates for emails");
     const bookRepository = new BooksRepository();
 
     const books = await bookRepository.getBooksWithUnacceptedRequests();
@@ -61,7 +62,7 @@ async function checkDueDatesAndSendEmails() {
         book.quantity = Number(book.quantity) + r;
       }
       await bookRepository.updateBook(book);
-      console.log(book);
+      console.log("checking done");
     });
   } catch (error) {
     console.error("Error in checkDueDatesAndSendEmails:", error);
