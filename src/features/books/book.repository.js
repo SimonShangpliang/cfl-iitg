@@ -95,10 +95,9 @@ export default class BooksRepository {
       const db = getDB();
       const collection = db.collection("books");
 
-      // Find all books where requests is non-empty
       const books = await collection
         .find({
-          requests: { $not: { $size: 0 } },
+          requests: { $exists: true, $ne: [] },
         })
         .toArray();
 
