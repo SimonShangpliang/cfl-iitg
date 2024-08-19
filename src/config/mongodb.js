@@ -30,6 +30,8 @@ async function checkDueDatesAndSendEmails() {
 
     const books = await bookRepository.getBooksWithUnacceptedRequests();
 
+    console.log("books not present:", !books);
+
     books.forEach(async (book) => {
       const currentDate = new Date();
       if (book.requests) {
@@ -62,8 +64,8 @@ async function checkDueDatesAndSendEmails() {
         book.quantity = Number(book.quantity) + r;
       }
       await bookRepository.updateBook(book);
-      console.log("checking done");
     });
+    console.log("checking done");
   } catch (error) {
     console.error("Error in checkDueDatesAndSendEmails:", error);
   }
@@ -93,7 +95,7 @@ async function sendEmail(bookName, recipientMail) {
   }
 }
 // Schedule the task to run every day at midnight
-cron.schedule("*/1 * * * *", async () => {
+cron.schedule("*/2 * * * *", async () => {
   console.log("Running cron job to check due dates and send emails...");
   try {
     await checkDueDatesAndSendEmails();
