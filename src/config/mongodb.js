@@ -93,7 +93,7 @@ async function sendEmail(bookName, recipientMail) {
   }
 }
 // Schedule the task to run every day at midnight
-cron.schedule("*/1 * * * *", async () => {
+cron.schedule("0 3 * * *", async () => {
   console.log("Running cron job to check due dates and send emails...");
   try {
     await checkDueDatesAndSendEmails();
