@@ -371,7 +371,7 @@ export default class BookController {
   }
   async issueBook(req, res) {
     const bookId = req.params.bookId;
-    const book = await this.bookRepository.findBook(bookId);
+    let book = await this.bookRepository.findBook(bookId);
     console.log(bookId);
     if (!book) return res.status(400).redirect(req.originalUrl);
 
@@ -417,7 +417,8 @@ export default class BookController {
     );
     var isAccepted = false;
     let mailed = false;
-    book.requests.push({
+    console.log("pushed book");
+    book = await this.bookRepository.addNewRequestToBook(bookId, {
       name,
       email,
       daysLeft,
@@ -425,8 +426,6 @@ export default class BookController {
       isAccepted,
       mailed,
     });
-    console.log("pushed book");
-    await this.bookRepository.updateBook(book);
     res.render("bookDetails", {
       errMessage: null,
       book,

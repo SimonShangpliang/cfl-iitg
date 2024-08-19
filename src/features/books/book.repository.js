@@ -167,7 +167,7 @@ export default class BooksRepository {
         ebookLink: book.ebookLink,
         numOfPages: book.numOfPages,
         year: book.year,
-        requests: book.requests,
+        requests: book.requests, // updates only reqs if deleted
         // Add eBook link if applicable
         // Handle images if necessary
         // You might need additional logic to process and store image URLs
@@ -182,6 +182,23 @@ export default class BooksRepository {
     } catch (err) {
       console.error(err);
       throw err;
+    }
+  }
+
+  async addNewRequestToBook(bookId, newRequest) {
+    const db = getDB();
+    const collection = db.collection("books");
+
+    try {
+      const updatedBook = await collection.findOneAndUpdate(
+        { _id: bookId },
+        { $push: { requests: newRequest } },
+        { returnDocument: "after" }
+      ); // 'after' returns the document after the update
+
+      return updatedBook.value;
+    } catch (error) {
+      console.log(error);
     }
   }
 
