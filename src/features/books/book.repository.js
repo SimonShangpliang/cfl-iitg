@@ -98,7 +98,7 @@ export default class BooksRepository {
       // Find all books where requests is non-empty
       const books = await collection
         .find({
-          requests: { $ne: [] },
+          requests: { $not: { $size: 0 } },
         })
         .toArray();
 
