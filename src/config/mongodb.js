@@ -30,9 +30,6 @@ async function checkDueDatesAndSendEmails() {
 
     const books = await bookRepository.getBooksWithNonEmptyRequests();
 
-    if (!books) console.log("Books Not present");
-    else console.log(books);
-
     books.forEach(async (book) => {
       const currentDate = new Date();
       if (book.requests) {
@@ -43,7 +40,7 @@ async function checkDueDatesAndSendEmails() {
             (r.returnDate - currentDate) / (1000 * 60 * 60 * 24)
           );
 
-          if (r.daysLeft <= 1 && r.isAccepted && !r.mailed)
+          if (r.daysLeft == 1 && r.isAccepted && !r.mailed)
             mailReaders.push({
               email: r.email,
               days: r.daysLeft,
