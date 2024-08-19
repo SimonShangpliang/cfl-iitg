@@ -5,7 +5,6 @@ import {
 } from "@aws-sdk/client-s3";
 import BookModel from "./book.model.js";
 import BooksRepository from "./book.repository.js";
-import nodemailer from "nodemailer";
 
 const bucketName = process.env.BUCKET_NAME;
 const bucketRegion = process.env.BUCKET_REGION;
@@ -86,41 +85,9 @@ export default class BookController {
     try {
       const book = await this.bookRepository.findBook(bookId);
       if (book) {
-        const currentDate = new Date();
-        if (book.requests) {
-          const mailReaders = [];
-          const removeIndexes = [];
-          book.requests.forEach((r, index) => {
-            r.daysLeft = Math.round(
-              (r.returnDate - currentDate) / (1000 * 60 * 60 * 24)
-            );
-
-            if (r.daysLeft == 1 && r.isAccepted && !r.mailed)
-              mailReaders.push({
-                email: r.email,
-                days: r.daysLeft,
-                requestIndex: index,
-              });
-            if (r.daysLeft <= 0) removeIndexes.push(index);
-          });
-
-          mailReaders.forEach(async (reader) => {
-            book.requests[reader.requestIndex].mailed = true;
-            await this.sendEmail(book.name, reader.email);
-          });
-
-          let r = 0;
-          removeIndexes.forEach((index) => {
-            book.requests.splice(index - r, 1);
-            r++;
-          });
-          book.quantity = Number(book.quantity) + r;
-        }
-        await this.bookRepository.updateBook(book);
         const requested = book.requests.some(
           (request) => request.name === req.session.userName
         );
-
         res.status(200).render("bookDetails", {
           errMessage: null,
           book,
@@ -466,29 +433,5 @@ export default class BookController {
       userEmail: req.session.userEmail,
       requested: true,
     });
-  }
-
-  async sendEmail(bookName, recipientMail) {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.BOOK_MANAGER_EMAIL,
-        pass: process.env.BOOK_MANAGER_PASSWD,
-      },
-    });
-
-    const mailOptions = {
-      from: process.env.BOOK_MANAGER_EMAIL,
-      to: recipientMail,
-      subject: `Christian Fellowship Book Return Due`,
-      text: `Please return ${bookName} book by tommorow`,
-    };
-
-    try {
-      const info = await transporter.sendMail(mailOptions);
-      console.log("Email sent: " + info.response);
-    } catch (error) {
-      console.log(error);
-    }
   }
 }

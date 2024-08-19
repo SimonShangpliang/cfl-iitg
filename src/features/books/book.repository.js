@@ -72,21 +72,41 @@ export default class BooksRepository {
   }
   // book.repository.js
 
-async getBooksWithUnacceptedRequests() {
-  try {
-    const db = getDB();
-    const collection = db.collection("books");
-    
-    // Find books where any request has isAccepted as false
-    const books = await collection.find({
-      "requests.isAccepted": false
-    }).toArray();
-    
-    return books;
-  } catch (err) {
-    return err;
+  async getBooksWithUnacceptedRequests() {
+    try {
+      const db = getDB();
+      const collection = db.collection("books");
+
+      // Find books where any request has isAccepted as false
+      const books = await collection
+        .find({
+          "requests.isAccepted": false,
+        })
+        .toArray();
+
+      return books;
+    } catch (err) {
+      return err;
+    }
   }
-}
+
+  async getBooksWithNonEmptyRequests() {
+    try {
+      const db = getDB();
+      const collection = db.collection("books");
+
+      // Find all books where requests is non-empty
+      const books = await collection
+        .find({
+          requests: { $ne: [] },
+        })
+        .toArray();
+
+      return books;
+    } catch (err) {
+      return err;
+    }
+  }
 
   async updateRequestStatus(bookId, requestName, isAccepted) {
     try {

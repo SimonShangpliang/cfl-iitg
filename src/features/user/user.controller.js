@@ -18,7 +18,7 @@ export default class UserController {
   async signUp(req, res) {
     // console.log(req.body);
     const { name, email, password } = req.body;
-    console.log(req.body)
+    console.log(req.body);
     try {
       const user = new UserModel(name, email, password);
       await this.userRepository.SignUp(user);
@@ -48,7 +48,7 @@ export default class UserController {
         // 2. send token
         res
           .status(200)
-          .cookie("jwtToken", token, { maxAge: 360000, httpOnly: false });
+          .cookie("jwtToken", token, { maxAge: 3600000, httpOnly: false });
 
         req.session.userEmail = result.email;
         req.session.userName = result.name;
