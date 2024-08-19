@@ -61,24 +61,25 @@ export default class BookController {
       });
     }
   }
- // In BookController.js
-async getBooksWithUnacceptedRequests(req, res) {
-  try {
-    // Fetch all books
-    const books = await this.bookRepository.getAllBooks();
-    if (!books) return [];
+  // In BookController.js
+  async getBooksWithUnacceptedRequests(req, res) {
+    try {
+      // Fetch all books
+      const books = await this.bookRepository.getAllBooks();
+      if (!books) return [];
 
-    // Filter books with unaccepted requests
-    const booksWithUnacceptedRequests = books.filter(book =>
-      book.requests && book.requests.some(request => !request.isAccepted)
-    );
-console.log(booksWithUnacceptedRequests)
-    return booksWithUnacceptedRequests;
-  } catch (err) {
-    console.error(err);
-    throw new Error("Failed to retrieve books with unaccepted requests");
+      // Filter books with unaccepted requests
+      const booksWithUnacceptedRequests = books.filter(
+        (book) =>
+          book.requests && book.requests.some((request) => !request.isAccepted)
+      );
+      console.log(booksWithUnacceptedRequests);
+      return booksWithUnacceptedRequests;
+    } catch (err) {
+      console.error(err);
+      throw new Error("Failed to retrieve books with unaccepted requests");
+    }
   }
-}
 
   async getBook(req, res) {
     const bookId = req.params.bookId;
@@ -105,7 +106,7 @@ console.log(booksWithUnacceptedRequests)
 
           mailReaders.forEach(async (reader) => {
             book.requests[reader.requestIndex].mailed = true;
-            await this.sendEmail(reader.email, reader.days);
+            await this.sendEmail(book.name, reader.email);
           });
 
           let r = 0;
@@ -467,7 +468,7 @@ console.log(booksWithUnacceptedRequests)
     });
   }
 
-  async sendEmail(recipientMail, days) {
+  async sendEmail(bookName, recipientMail) {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -480,7 +481,7 @@ console.log(booksWithUnacceptedRequests)
       from: process.env.BOOK_MANAGER_EMAIL,
       to: recipientMail,
       subject: `Christian Fellowship Book Return Due`,
-      text: `Please return borrowed book by tommorow`,
+      text: `Please return ${bookName} book by tommorow`,
     };
 
     try {
