@@ -61,6 +61,7 @@ async function checkDueDatesAndSendEmails() {
         book.quantity = Number(book.quantity) + r;
       }
       await bookRepository.updateBook(book);
+      console.log(book);
     });
   } catch (error) {
     console.error("Error in checkDueDatesAndSendEmails:", error);
@@ -91,7 +92,7 @@ async function sendEmail(bookName, recipientMail) {
   }
 }
 // Schedule the task to run every day at midnight
-cron.schedule("* * * * *", async () => {
+cron.schedule("*/5 * * * *", async () => {
   console.log("Running cron job to check due dates and send emails...");
   try {
     await checkDueDatesAndSendEmails();
