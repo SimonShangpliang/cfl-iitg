@@ -410,7 +410,7 @@ export default class BookController {
       });
 
     // book.quantity = parseInt(book.quantity) - 1;
-    const daysLeft = 30;
+    const daysLeft = 60;
     const currentDate = new Date();
     const returnDate = new Date(
       currentDate.getTime() + 30 * 24 * 60 * 60 * 1000
