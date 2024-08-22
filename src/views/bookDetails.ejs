@@ -158,8 +158,9 @@
       class="alert <%= request.isAccepted ? 'alert-success' : 'alert-primary' %>"
       role="alert"
     >
-      Requested by <%= request.name %> <% if (request.isAccepted) { %> to be
-      returned in <%= request.daysLeft %> days <% } %>
+      <% if(!request.isAccepted) {%> Requested by <%} else{ %> Issued to <% } %>
+      <%= request.name %> <% if (request.isAccepted) { %> to be returned in <%=
+      request.daysLeft %> days <% } %>
       <div class="mt-2">
         <% if (request.isAccepted) { %>
         <button
@@ -190,9 +191,9 @@
       class="alert <%= request.isAccepted ? 'alert-success' : 'alert-primary' %>"
       role="alert"
     >
-      <% if(!request.isAccepted) {%> Requested by <%= request.name %><% }else {
-      %> Issued to <%= request.name %><% }%> <% if (request.isAccepted) { %>, to
-      be returned on <%= request.daysLeft %> days<% }%>
+      <% if(!request.isAccepted) {%> Requested by <% }else { %> Issued to <% }
+      %> <%= request.name %> <% if (request.isAccepted) { %>, to be returned on
+      <%= request.daysLeft %> days<% }%>
       <div class="mt-2">
         <% if (request.isAccepted) { %>
         <!-- <span class="btn btn-success" style="pointer-events: none; opacity: 0.6;">Accepted</span> -->

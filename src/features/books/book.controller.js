@@ -75,7 +75,7 @@ export default class BookController {
       return booksWithUnacceptedRequests;
     } catch (err) {
       console.error(err);
-      throw new Error("Failed to retrieve books with unaccepted requests");
+      throw new Error("Failed to retrieve books with active requests");
     }
   }
 
