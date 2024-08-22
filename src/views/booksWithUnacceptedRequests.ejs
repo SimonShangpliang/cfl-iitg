@@ -1,32 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Books with Unaccepted Requests</title>
-  <link rel="stylesheet" href="/styles.css">
-</head>
-<body>
-  <h1>Books with Unaccepted Requests</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Books with Unaccepted Requests</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <h1>Books with Active Requests</h1>
 
-  <% if (typeof error !== 'undefined' && error) { %>
+    <% if (typeof error !== 'undefined' && error) { %>
     <div class="alert alert-danger"><%= error %></div>
-  <% } %>
-
-  <% if (books && books.length > 0) { %>
+    <% } %> <% if (books && books.length > 0) { %>
     <ul>
       <% books.forEach(book => { %>
-        <li>
-          <a href="/bookDetails/<%= book._id %>">
-            <%= book.name %> by <%= book.author %>
-          </a>
-        </li>
+      <li>
+        <a href="/bookDetails/<%= book._id %>">
+          <%= book.name %> by <%= book.author %>
+        </a>
+      </li>
       <% }) %>
     </ul>
-  <% } else { %>
-    <p>No books found with unaccepted requests.</p>
-  <% } %>
+    <% } else { %>
+    <p>No books found with pending requests.</p>
+    <% } %>
 
-  <a href="/">Back to Home</a>
-</body>
+    <a href="/">Back to Home</a>
+  </body>
 </html>

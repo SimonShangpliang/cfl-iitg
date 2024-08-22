@@ -69,8 +69,7 @@ export default class BookController {
 
       // Filter books with unaccepted requests
       const booksWithUnacceptedRequests = books.filter(
-        (book) =>
-          book.requests && book.requests.some((request) => !request.isAccepted)
+        (book) => book.requests && book.requests.length > 0 //&& book.requests.some((request) => !request.isAccepted)
       );
       console.log(booksWithUnacceptedRequests);
       return booksWithUnacceptedRequests;
