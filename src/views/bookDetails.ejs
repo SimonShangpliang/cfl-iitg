@@ -1,132 +1,30 @@
 <% if (errMessage) { %>
-  <div class="alert alert-danger" role="alert"><%= errMessage %></div>
-<% } %>
+<div class="alert alert-danger" role="alert"><%= errMessage %></div>
+<% } %> <% if (book) { %>
+<div class="container">
+  <!-- Carousel and book details -->
 
-<% if (book) { %>
-  <div class="container" >
-    <!-- Carousel and book details -->
-
-    <% if (book.imagesUrl && book.imagesUrl.length > 0) { %>
-      <div id="carouselExampleIndicators" class="carousel slide">
-        <div class="carousel-indicators">
-          <% book.imagesUrl.forEach((imageUrl, index) => { %>
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="<%= index %>" class="<%= index === 0 ? 'active' : '' %>" aria-current="<%= index === 0 ? 'true' : '' %>" aria-label="Slide <%= index + 1 %>"></button>
-          <% }) %>
-        </div>
-        <div class="carousel-inner">
-          <% book.imagesUrl.forEach((imageUrl, index) => { %>
-            <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
-              <img src="<%= imageUrl %>" class="d-block w-100" alt="Book Image" />
-            </div>
-          <% }) %>
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Next</span>
-        </button>
-      </div>
-    <% } else { %>
-      <div style="width: 100%;display:flex;justify-content: center;">
-      <div class="default-image" style="width: 19rem;height: 29rem; margin-top: 1rem;background-color: bisque;align-self:center;">
-        <div class="title" style="font-size: x-large;padding-top: 3rem;"> <b><%= book.name %></b></div>
-        <div class="author" style="font-size: x-large;padding-bottom: 3rem;"><%= book.author %></div>
-      </div>
+  <% if (book.imagesUrl && book.imagesUrl.length > 0) { %>
+  <div id="carouselExampleIndicators" class="carousel slide">
+    <div class="carousel-indicators">
+      <% book.imagesUrl.forEach((imageUrl, index) => { %>
+      <button
+        type="button"
+        data-bs-target="#carouselExampleIndicators"
+        data-bs-slide-to="<%= index %>"
+        class="<%= index === 0 ? 'active' : '' %>"
+        aria-current="<%= index === 0 ? 'true' : '' %>"
+        aria-label="Slide <%= index + 1 %>"
+      ></button>
+      <% }) %>
     </div>
-    <% } %>
-    <!-- Book information -->
-    <div class="pt-4">
-      <h3 style="margin-bottom: 0;"><%= book.name %></h3>
-      <p><i>by <%= book.author %></i></p>
-
-      <div style="display: flex;flex-direction: row;" >
-       <p style="margin-right: 0.5rem;">Category: </p> 
-        <% book.categories.forEach(cat => { %>
-          <span class="badge bg-secondary" style="align-self: center;align-content: center;"><%= cat %></span>
-        <% }) %>
+    <div class="carousel-inner">
+      <% book.imagesUrl.forEach((imageUrl, index) => { %>
+      <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+        <img src="<%= imageUrl %>" class="d-block w-100" alt="Book Image" />
       </div>
-      <% if (book.year) { %>
-        <p>Year Published: <b><%= book.year %></b></p>
-      <% } %> 
-      <div style="display: table; width: 100%; border-collapse: collapse;margin-bottom: 1rem;">
-        <div style="display: table-row;">
-          <div style="display: table-cell; padding: 0.5rem; border: 1px solid #ddd;">
-            <p style="margin: 0;">Total Number of Hard Copies: <%= book.quantity %></p>
-          </div>
-          <div style="display: table-cell; padding: 0.5rem; border: 1px solid #ddd;">
-            <p style="margin: 0;">Issued: <%= book.requests.length %></p>
-          </div>
-          <div style="display: table-cell; padding: 0.5rem; border: 1px solid #ddd;">
-            <p style="margin: 0;">Available: <%= book.quantity - book.requests.length %></p>
-          </div>
-        </div>
-      </div>
-      
-
-      <!-- Conditionally display eBook link -->
-    
-      <!-- Conditionally display quantity and request button -->
-      <% if (book && book.typeOf && book.typeOf.includes('hardcopy')&&locals.userEmail) { %>
-        <button class="btn btn-<%= requested ? 'dark' : 'primary' %>" onclick="requestHardcopy('<%= book._id %>', '<%= requested %>')">
-          <%= requested ? 'PullBack' : 'Request Hardcopy' %>
-        </button>
-      <% } %>
-      <% if (book && book.typeOf &&book.typeOf.includes('ebook')) { %>
-        <a href="<%= book.ebookLink %>" class="btn btn-success"  target="_blank" rel="noopener noreferrer">eBook</a>
-      <% } %> 
-
-
-      <!-- Admin options for updating and deleting the book -->
-      <% if (locals.userEmail == "lalhriemsangfaihriemsang@gmail.com" ||
-      locals.userEmail=="gvp1992@gmail.com")  { %>
-        <a href="/updateBook/<%= book._id %>" class="btn btn-warning">Update</a>
-        <a href="#" class="btn btn-danger" onclick="confirmDelete('<%= book._id %>')">Delete</a>
-      <% } %>
-
-      <% if (book.desc!==null)  { %>
-      <h4 style="margin-top: 0.5rem;">Description</h4>
-      <p><%= book.desc %></p>
-      <% } %>
-      <!-- Display request information -->
-      <% if (book.requests) { %>
-        <% book.requests.forEach(request => { %>
-          <% if (locals.userEmail == "lalhriemsangfaihriemsang@gmail.com" || locals.userEmail == "gvp1992@gmail.com") { %>
-
-          <div class="alert <%= request.isAccepted ? 'alert-success' : 'alert-primary' %>" role="alert">
-            Requested by <%= request.name %>    <% if (request.isAccepted) { %>
-              to be returned in <%= request.daysLeft %> days  <% } %>
-              <div class="mt-2">
-                <% if (request.isAccepted) { %>
-                  <button class="btn btn-danger" onclick="updateRequestStatus('<%= book._id %>', '<%= request.name %>', false)">Returned</button>
-                <% } else { %>
-                  <button class="btn btn-success" onclick="updateRequestStatus('<%= book._id %>', '<%= request.name %>', true)">Accept</button>
-                  <button class="btn btn-danger" onclick="updateRequestStatus('<%= book._id %>', '<%= request.name %>', false)">Reject</button>
-                <% } %>
-              </div>
-          </div>
-          <% }%>
-          <% if (locals.userEmail != "lalhriemsangfaihriemsang@gmail.com" && locals.userEmail != "gvp1992@gmail.com") { %>
-            <div class="alert <%= request.isAccepted ? 'alert-success' : 'alert-primary' %>" role="alert">
-              Requested by <%= request.name %> <% if (request.isAccepted) { %>, to be returned on <%= request.daysLeft %> days<% }%>
-              <div class="mt-2">
-                <% if (request.isAccepted) { %>
-                  <!-- <span class="btn btn-success" style="pointer-events: none; opacity: 0.6;">Accepted</span> -->
-                  <span class="btn btn-success" style="pointer-events: none; opacity: 0.6;">Accepted</span>
-      
-              
-                <% } else { %>
-                  <span class="btn btn-warning" style="pointer-events: none; opacity: 0.6;">Waiting to be Accepted</span>
-                <% } %>
+      <% }) %>
     </div>
-            </div>
-            <% }%>
-        <% }) %>
-      <% } %>
-    </div>
-    
     <button
       class="carousel-control-prev"
       type="button"
@@ -146,78 +44,268 @@
       <span class="visually-hidden">Next</span>
     </button>
   </div>
-  <div style="width: 100%;height: 3rem;">
-
+  <% } else { %>
+  <div style="width: 100%; display: flex; justify-content: center">
+    <div
+      class="default-image"
+      style="
+        width: 19rem;
+        height: 29rem;
+        margin-top: 1rem;
+        background-color: bisque;
+        align-self: center;
+      "
+    >
+      <div class="title" style="font-size: x-large; padding-top: 3rem">
+        <b><%= book.name %></b>
+      </div>
+      <div class="author" style="font-size: x-large; padding-bottom: 3rem">
+        <%= book.author %>
+      </div>
+    </div>
   </div>
+  <% } %>
+  <!-- Book information -->
+  <div class="pt-4">
+    <h3 style="margin-bottom: 0"><%= book.name %></h3>
+    <p><i>by <%= book.author %></i></p>
+
+    <div style="display: flex; flex-direction: row">
+      <p style="margin-right: 0.5rem">Category:</p>
+      <% book.categories.forEach(cat => { %>
+      <span
+        class="badge bg-secondary"
+        style="align-self: center; align-content: center"
+        ><%= cat %></span
+      >
+      <% }) %>
+    </div>
+    <% if (book.year) { %>
+    <p>Year Published: <b><%= book.year %></b></p>
+    <% } %>
+    <div
+      style="
+        display: table;
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1rem;
+      "
+    >
+      <div style="display: table-row">
+        <div
+          style="display: table-cell; padding: 0.5rem; border: 1px solid #ddd"
+        >
+          <p style="margin: 0">
+            Total Number of Hard Copies: <%= book.quantity %>
+          </p>
+        </div>
+        <div
+          style="display: table-cell; padding: 0.5rem; border: 1px solid #ddd"
+        >
+          <p style="margin: 0">Issued: <%= book.requests.length %></p>
+        </div>
+        <div
+          style="display: table-cell; padding: 0.5rem; border: 1px solid #ddd"
+        >
+          <p style="margin: 0">
+            Available: <%= book.quantity - book.requests.length %>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conditionally display eBook link -->
+
+    <!-- Conditionally display quantity and request button -->
+    <% if (book && book.typeOf &&
+    book.typeOf.includes('hardcopy')&&locals.userEmail) { %>
+    <button
+      class="btn btn-<%= requested ? 'dark' : 'primary' %>"
+      onclick="requestHardcopy('<%= book._id %>', '<%= requested %>')"
+    >
+      <%= requested ? 'PullBack' : 'Request Hardcopy' %>
+    </button>
+    <% } %> <% if (book && book.typeOf &&book.typeOf.includes('ebook')) { %>
+    <a
+      href="<%= book.ebookLink %>"
+      class="btn btn-success"
+      target="_blank"
+      rel="noopener noreferrer"
+      >eBook</a
+    >
+    <% } %>
+
+    <!-- Admin options for updating and deleting the book -->
+    <% if (locals.userEmail == "lalhriemsangfaihriemsang@gmail.com" ||
+    locals.userEmail=="gvp1992@gmail.com") { %>
+    <a href="/updateBook/<%= book._id %>" class="btn btn-warning">Update</a>
+    <a
+      href="#"
+      class="btn btn-danger"
+      onclick="confirmDelete('<%= book._id %>')"
+      >Delete</a
+    >
+    <% } %> <% if (book.desc!==null) { %>
+    <h4 style="margin-top: 0.5rem">Description</h4>
+    <p><%= book.desc %></p>
+    <% } %>
+    <!-- Display request information -->
+    <% if (book.requests) { %> <% book.requests.forEach(request => { %> <% if
+    (locals.userEmail == "lalhriemsangfaihriemsang@gmail.com" ||
+    locals.userEmail == "gvp1992@gmail.com") { %>
+
+    <div
+      class="alert <%= request.isAccepted ? 'alert-success' : 'alert-primary' %>"
+      role="alert"
+    >
+      Requested by <%= request.name %> <% if (request.isAccepted) { %> to be
+      returned in <%= request.daysLeft %> days <% } %>
+      <div class="mt-2">
+        <% if (request.isAccepted) { %>
+        <button
+          class="btn btn-danger"
+          onclick="updateRequestStatus('<%= book._id %>', '<%= request.name %>', false)"
+        >
+          Returned
+        </button>
+        <% } else { %>
+        <button
+          class="btn btn-success"
+          onclick="updateRequestStatus('<%= book._id %>', '<%= request.name %>', true)"
+        >
+          Accept
+        </button>
+        <button
+          class="btn btn-danger"
+          onclick="updateRequestStatus('<%= book._id %>', '<%= request.name %>', false)"
+        >
+          Reject
+        </button>
+        <% } %>
+      </div>
+    </div>
+    <% }%> <% if (locals.userEmail != "lalhriemsangfaihriemsang@gmail.com" &&
+    locals.userEmail != "gvp1992@gmail.com") { %>
+    <div
+      class="alert <%= request.isAccepted ? 'alert-success' : 'alert-primary' %>"
+      role="alert"
+    >
+      <% if(!request.isAccepted) {%> Requested by <% }else { %> Issued to <% }%>
+      <!--  -->
+      <%= request.name %> <% if (request.isAccepted) { %>, to be returned on <%=
+      request.daysLeft %> days<% }%>
+      <div class="mt-2">
+        <% if (request.isAccepted) { %>
+        <!-- <span class="btn btn-success" style="pointer-events: none; opacity: 0.6;">Accepted</span> -->
+        <span class="btn btn-success" style="pointer-events: none; opacity: 0.6"
+          >Accepted</span
+        >
+
+        <% } else { %>
+        <span class="btn btn-warning" style="pointer-events: none; opacity: 0.6"
+          >Waiting to be Accepted</span
+        >
+        <% } %>
+      </div>
+    </div>
+    <% }%> <% }) %> <% } %>
+  </div>
+
+  <button
+    class="carousel-control-prev"
+    type="button"
+    data-bs-target="#carouselExampleIndicators"
+    data-bs-slide="prev"
+  >
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button
+    class="carousel-control-next"
+    type="button"
+    data-bs-target="#carouselExampleIndicators"
+    data-bs-slide="next"
+  >
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+<div style="width: 100%; height: 3rem"></div>
 <% } %>
 
 <script>
   function requestHardcopy(bookId, requested) {
-  const action = requested==='true' ? 'pullback' : 'request';
-  fetch(`/issueBook/${bookId}`, {
-    method: 'GET', // or 'POST' if needed
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-  .then(response => {
+    const action = requested === "true" ? "pullback" : "request";
+    fetch(`/issueBook/${bookId}`, {
+      method: "GET", // or 'POST' if needed
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
         if (response.ok) {
           // Redirect to the home page upon successful deletion
-          location.reload();         } else {
-          // Handle server-side error
-          alert('Failed to delete the book. Please try again.');
-        }
-      })
-  .catch(error => {
-    console.error('Error:', error);
-  });
-}
-
-
-
-  function confirmDelete(bookId) {
-    if (confirm('Are you sure you want to delete this book? This action cannot be undone.')) {
-      fetch('/deleteBook/' + bookId, {
-        method: 'DELETE', // Use DELETE method
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-      .then(response => {
-        if (response.ok) {
-          // Redirect to the home page upon successful deletion
-          window.location.href = '/';
+          location.reload();
         } else {
           // Handle server-side error
-          alert('Failed to delete the book. Please try again.');
+          alert("Failed to delete the book. Please try again.");
         }
       })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred. Please try again.');
+      .catch((error) => {
+        console.error("Error:", error);
       });
+  }
+
+  function confirmDelete(bookId) {
+    if (
+      confirm(
+        "Are you sure you want to delete this book? This action cannot be undone."
+      )
+    ) {
+      fetch("/deleteBook/" + bookId, {
+        method: "DELETE", // Use DELETE method
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => {
+          if (response.ok) {
+            // Redirect to the home page upon successful deletion
+            window.location.href = "/";
+          } else {
+            // Handle server-side error
+            alert("Failed to delete the book. Please try again.");
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          alert("An error occurred. Please try again.");
+        });
     }
   }
 </script>
 <script>
   function updateRequestStatus(bookId, requestName, isAccepted) {
-    fetch(`/update-request-status?bookId=${bookId}&requestName=${requestName}&isAccepted=${isAccepted}`, {
-      method: 'GET', // You can change to POST if required by your backend
-      headers: {
-        'Content-Type': 'application/json'
+    fetch(
+      `/update-request-status?bookId=${bookId}&requestName=${requestName}&isAccepted=${isAccepted}`,
+      {
+        method: "GET", // You can change to POST if required by your backend
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    })
-    .then(response => {
+    )
+      .then((response) => {
         if (response.ok) {
           // Redirect to the home page upon successful deletion
-          location.reload()
+          location.reload();
         } else {
           // Handle server-side error
-          alert('Failed to delete the book. Please try again.');
+          alert("Failed to delete the book. Please try again.");
         }
       })
-    .catch(error => {
-      console.error('Error:', error);
-    });
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   }
-  </script>
+</script>
