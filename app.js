@@ -39,7 +39,9 @@ app.post("/new", jwtAuth, uploadFiles.array("imagesUrl", 10), (req, res) =>
   bookController.addBook(req, res)
 );
 app.get('/aboutUs', (req, res) => {
-  res.render('aboutUs');
+  res.render('aboutUs',{
+    userEmail: req.session.userEmail
+  });
 });
 app.get("/bookDetails/:bookId", jwtAuth, (req, res) =>
   bookController.getBook(req, res)
@@ -75,14 +77,33 @@ app.get("/books-with-unaccepted-requests", async (req, res) => {
 
     // Render the EJS page with the list of books
     if (books && books.length > 0) {
-      res.status(200).render("booksWithUnacceptedRequests", { books, error: null });
+      res.status(200).render("booksWithUnacceptedRequests", { books, error: null,  userEmail: req.session.userEmail });
     } else {
-      res.status(404).render("booksWithUnacceptedRequests", { books: [], error: "No books found with unaccepted requests" });
+      res.status(404).render("booksWithUnacceptedRequests", { books: [], error: "No books found with unaccepted requests" ,  userEmail: req.session.userEmail});
     }
   } catch (err) {
     console.error(err);
     if (!res.headersSent) {
-      res.status(500).render("booksWithUnacceptedRequests", { books: [], error: err.message });
+      res.status(500).render("booksWithUnacceptedRequests", { books: [], error: err.message,  userEmail: req.session.userEmail });
+    }
+  }
+});
+
+app.get("/books-requests", async (req, res) => {
+  try {
+    // Fetch books with unaccepted requests
+    const books = await bookController.getBooksNonEmptyRequests(req, res);
+
+    // Render the EJS page with the list of books
+    if (books && books.length > 0) {
+      res.status(200).render("booksRequests", { books, error: null,  userEmail: req.session.userEmail });
+    } else {
+      res.status(404).render("booksRequests", { books: [], error: "No books found with requests" ,  userEmail: req.session.userEmail});
+    }
+  } catch (err) {
+    console.error(err);
+    if (!res.headersSent) {
+      res.status(500).render("booksRequests", { books: [], error: err.message,  userEmail: req.session.userEmail });
     }
   }
 });

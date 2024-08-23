@@ -64,18 +64,33 @@ export default class BookController {
   async getBooksWithUnacceptedRequests(req, res) {
     try {
       // Fetch all books
-      const books = await this.bookRepository.getAllBooks();
+      const books = await this.bookRepository.getBooksWithUnacceptedRequests();
       if (!books) return [];
 
       // Filter books with unaccepted requests
       const booksWithUnacceptedRequests = books.filter(
         (book) => book.requests && book.requests.length > 0 //&& book.requests.some((request) => !request.isAccepted)
       );
-      console.log(booksWithUnacceptedRequests);
+      console.log(booksWithUnacceptedRequests.requests);
       return booksWithUnacceptedRequests;
     } catch (err) {
       console.error(err);
       throw new Error("Failed to retrieve books with active requests");
+    }
+  }
+
+  async getBooksNonEmptyRequests(req, res) {
+    try {
+      // Fetch all books
+      const books = await this.bookRepository.getBooksWithNonEmptyRequests();
+      if (!books) return [];
+
+      // Filter books with unaccepted requests
+ 
+      return books;
+    } catch (err) {
+      console.error(err);
+      throw new Error("Failed to retrieve books with Non Empty Requests");
     }
   }
 

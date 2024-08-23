@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Issued Books</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <h1>Issued Books</h1>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert alert-danger"><%= error %></div>
+    <% } %> <% if (books && books.length > 0) { %>
+    <ul>
+      <% books.forEach(book => { %>
+      <li>
+        <a href="/bookDetails/<%= book._id %>">
+          <%= book.name %> by <%= book.author %>
+        </a>
+      </li>
+      <% }) %>
+    </ul>
+    <% } else { %>
+    <p>No issued books.</p>
+    <% } %>
+
+    <a href="/">Back to Home</a>
+  </body>
+</html>
