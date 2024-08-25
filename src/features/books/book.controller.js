@@ -86,7 +86,7 @@ export default class BookController {
       if (!books) return [];
 
       // Filter books with unaccepted requests
- 
+
       return books;
     } catch (err) {
       console.error(err);
@@ -427,7 +427,7 @@ export default class BookController {
     const daysLeft = 60;
     const currentDate = new Date();
     const returnDate = new Date(
-      currentDate.getTime() + 30 * 24 * 60 * 60 * 1000
+      currentDate.getTime() + 60 * 24 * 60 * 60 * 1000
     );
     var isAccepted = false;
     let mailed = false;
