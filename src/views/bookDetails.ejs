@@ -142,7 +142,7 @@
     <a
       href="#"
       class="btn btn-danger"
-      onclick="confirmDelete('<%= book._id %>')"
+      onclick="confirmDelete(`<%= book._id %>`)"
       >Delete</a
     >
     <% } %> <% if (book.desc!==null) { %>
@@ -165,20 +165,20 @@
         <% if (request.isAccepted) { %>
         <button
           class="btn btn-danger"
-          onclick="updateRequestStatus('<%= book._id %>', '<%= request.name %>', false)"
+          onclick="updateRequestStatus(`<%= book._id %>`, `<%= request.name %>`, false)"
         >
           Returned
         </button>
         <% } else { %>
         <button
           class="btn btn-success"
-          onclick="updateRequestStatus('<%= book._id %>', '<%= request.name %>', true)"
+          onclick="updateRequestStatus(`<%= book._id %>`, `<%= request.name %>`, true)"
         >
           Accept
         </button>
         <button
           class="btn btn-danger"
-          onclick="updateRequestStatus('<%= book._id %>', '<%= request.name %>', false)"
+          onclick="updateRequestStatus(`<%= book._id %>`, `<%= request.name %>`, false)"
         >
           Reject
         </button>
