@@ -121,7 +121,7 @@
     book.typeOf.includes('hardcopy')&&locals.userEmail) { %>
     <button
       class="btn btn-<%= requested ? 'dark' : 'primary' %>"
-      onclick="requestHardcopy('<%= book._id %>', '<%= requested %>')"
+      onclick="requestHardcopy(`<%= book._id %>`, '<%= requested %>')"
     >
       <%= requested ? 'PullBack' : 'Request Hardcopy' %>
     </button>
