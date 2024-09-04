@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authors List</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .author-card {
+            text-align: center;
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+        .author-card img {
+            max-width: 150px;
+            max-height: 200px;
+            object-fit: cover;
+            align-items: center;
+        }
+        .author-name {
+            margin-top: 0.3rem;
+            font-weight: bold;
+            margin-bottom: 0.2rem;
+        }
+        .author-card a {
+            color: inherit;
+        }
+        .load-more-btn {
+            display: block;
+            width: 100%;
+            text-align: center;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-4">
+    <a href="/books%>" style="color:black">
+        <h4 class="mb-4" style="margin-top: 0.2rem;">Explore all books</h4>
+    </a>
+    <h1 class="mb-4" style="margin-top: 0rem;">Browse by Authors</h1>
+
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4" id="authors-container">
+        <% if (Array.isArray(authors) && authors.length > 0) { %>
+            <% authors.forEach((author, index) => { %>
+                <div class="col author-card-container" style="display: <%= index < 8 ? 'block' : 'none' %>;">
+                    <div class="author-card card">
+                        <a href="/books/?search=<%= encodeURIComponent(author.author) %>" data-author="<%= encodeURIComponent(author.author) %>">
+                            <img src="<%= author.pic %>" alt="<%= author.author %>" class="card-img">
+                            <div>
+                                <div class="author-name"><%= author.author %></div>
+                            </div>
+                        </a>
+                        <div>
+                            <a href="/books/?search=<%= encodeURIComponent(author.author) %>&type=Biography" style="text-decoration: none;color:blue" data-author="<%= encodeURIComponent(author.author) %>">
+                                <h6>Biography</h6>
+                            </a>
+                            <div class="categories mb-2">
+                                <span class="badge bg-secondary">
+                                    <a href="/books/?search=<%= encodeURIComponent(author.author) %>&type=Testimony" style="text-decoration: none;" data-author="<%= encodeURIComponent(author.author) %>">
+                                        <span>Testimony</span>
+                                    </a>
+                                </span>
+                                <span class="badge bg-secondary">
+                                    <a href="/books/?search=<%= encodeURIComponent(author.author) %>&type=Commentary" style="text-decoration: none;" data-author="<%= encodeURIComponent(author.author) %>">
+                                        <span>Commentary</span>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <p>No authors available</p>
+        <% } %>
+    </div>
+
+    <% if (authors.length > 8) { %>
+        <button id="load-more-btn" class="btn btn-primary load-more-btn">Load More</button>
+    <% } %>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let loadMoreBtn = document.getElementById('load-more-btn');
+        let authorsContainer = document.getElementById('authors-container');
+        let currentlyDisplayed = 8;
+
+        loadMoreBtn.addEventListener('click', function () {
+            let authorCards = authorsContainer.getElementsByClassName('author-card-container');
+            for (let i = currentlyDisplayed; i < currentlyDisplayed + 8 && i < authorCards.length; i++) {
+                authorCards[i].style.display = 'block';
+            }
+            currentlyDisplayed += 8;
+
+            // Hide the button if all authors are displayed
+            if (currentlyDisplayed >= authorCards.length) {
+                loadMoreBtn.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

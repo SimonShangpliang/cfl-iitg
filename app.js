@@ -6,6 +6,8 @@ import path from "path";
 import jwtAuth from "./src/middlewares/jwtAuth.middleware.js";
 import UserController from "./src/features/user/user.controller.js";
 import BookController from "./src/features/books/book.controller.js";
+import AuthorController from "./src/features/authors/author.controller.js";
+
 import { connectToMongoDB } from "./src/config/mongodb.js";
 import uploadFiles from "./src/middlewares/fileUpload.middleware.js";
 
@@ -24,12 +26,15 @@ app.use(
     cookie: { secure: false },
   })
 );
+app.use(express.json()); // Middleware to parse JSON request bodies
+
 app.use(expressEjsLayouts);
 
 const bookController = new BookController();
 const userController = new UserController();
+const authorController = new AuthorController();
 
-app.get("/", (req, res) => bookController.getAll(req, res));
+app.get("/books", (req, res) => bookController.getAll(req, res));
 app.get("/register", (req, res) => userController.getRegister(req, res));
 app.post("/register", (req, res) => userController.signUp(req, res));
 app.get("/login", (req, res) => userController.getLogin(req, res));
@@ -38,6 +43,25 @@ app.get("/new", jwtAuth, (req, res) => bookController.getNewBookForm(req, res));
 app.post("/new", jwtAuth, uploadFiles.array("imagesUrl", 10), (req, res) =>
   bookController.addBook(req, res)
 );
+app.post("/addAuthor", (req, res) =>{
+  console.log(123,req.body);
+  authorController.addAuthor(req, res)}
+);
+app.get("/getAuthor", (req, res) =>
+  authorController.getAllAuthors(req, res)
+);
+app.get('/', async (req, res) => {
+  try {
+    // Fetch all valid authors from the controller
+    const authors = await authorController.getAllAuthors();
+    
+    // Render the authorsList.ejs template with the fetched authors
+    res.render('authorsList', { authors });
+  } catch (err) {
+    console.error(err); // Log the error
+    res.status(500).json({ error: err.message }); // Send error response
+  }
+});
 app.get('/aboutUs', (req, res) => {
   res.render('aboutUs',{
     userEmail: req.session.userEmail
@@ -62,6 +86,7 @@ app.get("/updateBook/:bookId", (req, res) =>
 app.post("/updateBook/:bookId", jwtAuth, uploadFiles.array("imagesUrl", 10),(req, res) =>
   bookController.updateBook(req, res)
 );
+
 app.get("/deleteBook/:bookId", (req, res) =>
   bookController.deleteBook(req, res)
 );

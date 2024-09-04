@@ -21,8 +21,8 @@
           </label>
         </div>
         <div class="form-check" style="margin-top: 0;">
-          <input class="form-check-input" type="checkbox" id="filterHardcopy" />
-          <label class="form-check-label" for="filterHardcopy">
+          <input class="form-check-input" type="checkbox" id="filterHardcopy" checked/>
+          <label class="form-check-label" for="filterHardcopy" >
             Hardcopy
           </label>
         </div>
@@ -197,7 +197,7 @@
 
 
 <div class="container-fluid d-flex flex-wrap justify-content-evenly">
-  <% if (Array.isArray(books)) { %> 
+  <% if (Array.isArray(books)&&books.length>0) { %> 
     <% books.forEach(book => { %>
 
     
