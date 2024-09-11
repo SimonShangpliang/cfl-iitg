@@ -290,10 +290,11 @@ console.log("here :", sortByPagesCheckbox)
 
             updateBookVisibility();
         }
-        if(searchQuery)
+        if(searchQuery||typeQuery)
         {
+            if(searchQuery){
             console.log(searchQuery,typeQuery)
-            searchInput.value=searchQuery;
+            searchInput.value=searchQuery;}
             if(typeQuery)
         {
         const selectedCategoryInput = document.querySelector(`input[name="category"][value="${typeQuery}"]`);

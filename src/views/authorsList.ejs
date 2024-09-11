@@ -36,9 +36,15 @@
 <body>
 
 <div class="container mt-4">
-    <a href="/books%>" style="color:black">
+    <div style="display: flex;flex-direction: row;justify-content: space-between;">
+    <a href="/books%>" style="color:black;align-self: center;">
         <h5 style="margin-top: 0.2rem;">Explore all books</h5>
     </a>
+    <a href="/books/?type=Biography" style="color:black;align-self: center;">
+
+        <h5 style="margin-top: 1rem;margin-bottom: 1rem;">Biographies</h2>
+    </a>
+</div>
     <h2  style="margin-top: 0rem;margin-bottom: 1rem;">Browse by Authors</h2>
 
     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4" id="authors-container">
@@ -62,11 +68,7 @@
                                         <span>Testimony</span>
                                     </a>
                                 </span>
-                                <span class="badge bg-secondary">
-                                    <a href="/books/?search=<%= encodeURIComponent(author.author) %>&type=Commentary" style="text-decoration: none;" data-author="<%= encodeURIComponent(author.author) %>">
-                                        <span>Commentary</span>
-                                    </a>
-                                </span>
+                              
                             </div>
                         </div>
                     </div>
@@ -80,6 +82,9 @@
     <% if (authors.length > 8) { %>
         <button id="load-more-btn" class="btn btn-primary load-more-btn">Load More</button>
     <% } %>
+
+   <div style="width:100%;height: 2rem;"></div>
+
 </div>
 
 <script>
