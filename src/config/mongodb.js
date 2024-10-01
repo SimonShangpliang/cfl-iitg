@@ -4,8 +4,8 @@ import { MongoClient } from "mongodb";
 import nodemailer from "nodemailer";
 import cron from "node-cron";
 import BooksRepository from "../features/books/book.repository.js";
-const defaultURL =
-  "mongodb+srv://lalhriemsang:lal%40123%23777@cluster0.7ik7jus.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const defaultURL = process.env.MONGO_URL;
+// "mongodb+srv://lalhriemsang:lal%40123%23777@cluster0.7ik7jus.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 // const url =
 //   process.env.MONGO_URL || "mongodb://localhost:27017/Christians-IITG-Books";
