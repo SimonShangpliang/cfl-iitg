@@ -22,6 +22,7 @@
       <% book.imagesUrl.forEach((imageUrl, index) => { %>
       <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
         <img src="<%= imageUrl %>" class="d-block w-100" alt="Book Image" />
+
       </div>
       <% }) %>
     </div>
@@ -83,6 +84,9 @@
     <% if (book.year) { %>
     <p>Year Published: <b><%= book.year %></b></p>
     <% } %>
+    <% if (book.numOfPages) { %>
+      <p>Number of Pages: <b><%= book.numOfPages %></b></p>
+      <% } %>
     <div
       style="
         display: table;
@@ -121,7 +125,7 @@
     book.typeOf.includes('hardcopy')&&locals.userEmail) { %>
     <button
       class="btn btn-<%= requested ? 'dark' : 'primary' %>"
-      onclick="requestHardcopy('<%= book._id %>', '<%= requested %>')"
+      onclick="requestHardcopy(`<%= book._id %>`, '<%= requested %>')"
     >
       <%= requested ? 'PullBack' : 'Request Hardcopy' %>
     </button>
@@ -142,7 +146,7 @@
     <a
       href="#"
       class="btn btn-danger"
-      onclick="confirmDelete('<%= book._id %>')"
+      onclick="confirmDelete(`<%= book._id %>`)"
       >Delete</a
     >
     <% } %> <% if (book.desc!==null) { %>
@@ -165,20 +169,20 @@
         <% if (request.isAccepted) { %>
         <button
           class="btn btn-danger"
-          onclick="updateRequestStatus('<%= book._id %>', '<%= request.name %>', false)"
+          onclick="updateRequestStatus(`<%= book._id %>`, `<%= request.name %>`, false)"
         >
           Returned
         </button>
         <% } else { %>
         <button
           class="btn btn-success"
-          onclick="updateRequestStatus('<%= book._id %>', '<%= request.name %>', true)"
+          onclick="updateRequestStatus(`<%= book._id %>`, `<%= request.name %>`, true)"
         >
           Accept
         </button>
         <button
           class="btn btn-danger"
-          onclick="updateRequestStatus('<%= book._id %>', '<%= request.name %>', false)"
+          onclick="updateRequestStatus(`<%= book._id %>`, `<%= request.name %>`, false)"
         >
           Reject
         </button>

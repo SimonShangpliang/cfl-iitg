@@ -28,12 +28,6 @@
     </style>
 </head>
 <body>
-    <!-- Modal for displaying authors -->
-   
-
-    <!-- Modal for sorting books by name -->
-
-
     <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark" data-bs-theme="dark" style="padding-bottom: 0;">
         <div class="container-fluid" style="margin-bottom: 0;">
             <a class="navbar-brand" href="/" style="margin-bottom: 0;">    <h4  style="margin-bottom: 0;padding-bottom: 0;"><strong>Christian Fellowship Library</strong></h4>
@@ -53,7 +47,7 @@
                 <ul class="navbar-nav mb-2 mb-lg-0">
 
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/">Books</a>
+                        <a class="nav-link active" aria-current="page" href="/books">Books</a>
                     </li>
                     <% if(locals.userEmail == "lalhriemsangfaihriemsang@gmail.com"||
                     locals.userEmail=="gvp1992@gmail.com") { %>
@@ -74,13 +68,7 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/logout">Logout</a>
                     </li>
-                
-                    <!-- <li class="filter">
-                        <a class="nav-link active" aria-current="page" href="#" id="showAuthors">Filter</a>
-                    </li> -->
-                    <!-- <li class="nav-item">
-                      <a class="nav-link active" aria-current="page" href="#" id="showSortDialog">Sort</a>
-                  </li> -->
+    
                     <% } else { %>
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="/aboutUs">About </a>
@@ -92,13 +80,6 @@
                         <a class="nav-link active" aria-current="page" href="/login">Login</a>
                     </li>
               
-                    <!-- <li class="filter">
-                        <a class="nav-link active" aria-current="page" href="#" id="showAuthors">Filter</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link active" aria-current="page" href="#" id="showSortDialog">Sort</a>
-                  </li> -->
-                  
                     <% } %>
                 </ul>
             </div>
@@ -106,11 +87,14 @@
     </nav>
 
     <div class="container">
-        <!-- Place holder for other ejs views -->
         <%- body %>
     </div>
 <script>
+
+
     document.addEventListener("DOMContentLoaded", function () {
+  
+
     const showSortDialogButton = document.getElementById("showSortDialog");
     const sortByNameCheckbox = document.getElementById("sortByName");
     const sortByAuthorCheckbox = document.getElementById("sortByAuthor");
@@ -194,172 +178,209 @@ console.log("here :", sortByPagesCheckbox)
     });
 
     sortOrderSelect.addEventListener("change", updateBookVisibility);
+   
 });
 
 </script>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const searchInput = document.getElementById("searchInput");
-    const showAuthorsButton = document.getElementById("showAuthors");
-    const authorsList = document.getElementById("authorsList");
-    const filterEbookCheckbox = document.getElementById("filterEbook");
-    const filterHardcopyCheckbox = document.getElementById("filterHardcopy");
-    const applyCategoryFilterButton = document.getElementById("applyCategoryFilter");
-    const applyClearCategoryFilterButton = document.getElementById("applyClearCategoryFilter");
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
 
-    // Fetch and display authors when the "Filter" button is clicked
-    showAuthorsButton.addEventListener("click", function (event) {
-        event.preventDefault();
+                // Function to get URL parameter by name
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
 
-        fetch("/get-all-authors")
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                return response.json().catch(() => {
-                    throw new Error("Error parsing JSON response");
-                });
-            })
-            .then((data) => {
-                authorsList.innerHTML = ""; // Clear previous authors
+        // Extract the search query from URL
+        const searchQuery = getQueryParam('search');
+    const typeQuery=getQueryParam('type');
 
-                if (Array.isArray(data) && data.length > 0) {
-                    data.forEach((author) => {
-                        const listItem = document.createElement("div");
-                        listItem.className = "col";
 
-                        const checkboxWrapper = document.createElement("div");
-                        checkboxWrapper.className = "form-check";
+        const searchInput = document.getElementById("searchInput");
+    
+        const showAuthorsButton = document.getElementById("showAuthors");
+        const authorsList = document.getElementById("authorsList");
+        const filterEbookCheckbox = document.getElementById("filterEbook");
+        const filterHardcopyCheckbox = document.getElementById("filterHardcopy");
+        const applyCategoryFilterButton = document.getElementById("applyCategoryFilter");
+        const applyClearCategoryFilterButton = document.getElementById("applyClearCategoryFilter");
 
-                        const checkbox = document.createElement("input");
-                        checkbox.className = "form-check-input";
-                        checkbox.type = "checkbox";
-                        checkbox.value = author;
-                        checkbox.id = `author-${author}`;
+        // Fetch and display authors when the "Filter" button is clicked
+        showAuthorsButton.addEventListener("click", function (event) {
+            event.preventDefault();
 
-                        const label = document.createElement("label");
-                        label.className = "form-check-label";
-                        label.setAttribute("for", `author-${author}`);
-                        label.textContent = author;
-
-                        checkboxWrapper.appendChild(checkbox);
-                        checkboxWrapper.appendChild(label);
-                        listItem.appendChild(checkboxWrapper);
-                        authorsList.appendChild(listItem);
-
-                        // Add event listener to transfer author name to search bar when clicked
-                        checkbox.addEventListener("change", function () {
-                            if (this.checked) {
-                                searchInput.value = author;
-                                updateBookVisibility(); // Trigger search immediately
-
-                                // Uncheck all other checkboxes
-                                const allCheckboxes = document.querySelectorAll(".form-check-input");
-                                allCheckboxes.forEach((cb) => {
-                                    if (cb !== this) {
-                                        cb.checked = false;
-                                    }
-                                });
-                            } else {
-                                searchInput.value = "";
-                                updateBookVisibility(); // Trigger search immediately
-                            }
-                        });
+            fetch("/get-all-authors")
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json().catch(() => {
+                        throw new Error("Error parsing JSON response");
                     });
-                } else {
-                    authorsList.innerHTML = '<div class="col">No authors found</div>';
-                }
+                })
+                .then((data) => {
+                    authorsList.innerHTML = ""; // Clear previous authors
 
-                // Show the modal
-                const authorsModal = new bootstrap.Modal(document.getElementById("authorsModal"));
-                authorsModal.show();
-            })
-            .catch((error) => {
-                console.error("Error fetching authors:", error);
-                authorsList.innerHTML = '<div class="col">Error fetching authors</div>';
-                const authorsModal = new bootstrap.Modal(document.getElementById("authorsModal"));
-                authorsModal.show();
-            });
-    });
-    function handleTypeSelection(event) {
-        const clickedCheckbox = event.target;
+                    if (Array.isArray(data) && data.length > 0) {
+                        data.forEach((author) => {
+                            const listItem = document.createElement("div");
+                            listItem.className = "col";
 
-        if (clickedCheckbox.id === "filterEbook" && clickedCheckbox.checked) {
-            filterHardcopyCheckbox.checked = false;
-        } else if (clickedCheckbox.id === "filterHardcopy" && clickedCheckbox.checked) {
-            filterEbookCheckbox.checked = false;
+                            const checkboxWrapper = document.createElement("div");
+                            checkboxWrapper.className = "form-check";
+
+                            const checkbox = document.createElement("input");
+                            checkbox.className = "form-check-input";
+                            checkbox.type = "checkbox";
+                            checkbox.value = author;
+                            checkbox.id = `author-${author}`;
+
+                            const label = document.createElement("label");
+                            label.className = "form-check-label";
+                            label.setAttribute("for", `author-${author}`);
+                            label.textContent = author;
+
+                            checkboxWrapper.appendChild(checkbox);
+                            checkboxWrapper.appendChild(label);
+                            listItem.appendChild(checkboxWrapper);
+                            authorsList.appendChild(listItem);
+
+                            // Add event listener to transfer author name to search bar when clicked
+                            checkbox.addEventListener("change", function () {
+                                if (this.checked) {
+                                    searchInput.value = author;
+                                    updateBookVisibility(); // Trigger search immediately
+
+                                    // Uncheck all other checkboxes
+                                    const allCheckboxes = document.querySelectorAll(".form-check-input");
+                                    allCheckboxes.forEach((cb) => {
+                                        if (cb !== this) {
+                                            cb.checked = false;
+                                        }
+                                    });
+                                } else {
+                                    searchInput.value = "";
+                                    updateBookVisibility(); // Trigger search immediately
+                                }
+                            });
+                        });
+                    } else {
+                        authorsList.innerHTML = '<div class="col">No authors found</div>';
+                    }
+
+                    // Show the modal
+                    const authorsModal = new bootstrap.Modal(document.getElementById("authorsModal"));
+                    authorsModal.show();
+                })
+                .catch((error) => {
+                    console.error("Error fetching authors:", error);
+                    authorsList.innerHTML = '<div class="col">Error fetching authors</div>';
+                    const authorsModal = new bootstrap.Modal(document.getElementById("authorsModal"));
+                    authorsModal.show();
+                });
+        });
+        function handleTypeSelection(event) {
+            const clickedCheckbox = event.target;
+
+            if (clickedCheckbox.id === "filterEbook" && clickedCheckbox.checked) {
+                filterHardcopyCheckbox.checked = false;
+            } else if (clickedCheckbox.id === "filterHardcopy" && clickedCheckbox.checked) {
+                filterEbookCheckbox.checked = false;
+            }
+
+            updateBookVisibility();
         }
+        if(searchQuery||typeQuery)
+        {
+            if(searchQuery){
+            console.log(searchQuery,typeQuery)
+            searchInput.value=searchQuery;}
+            if(typeQuery)
+        {
+        const selectedCategoryInput = document.querySelector(`input[name="category"][value="${typeQuery}"]`);
+        if (selectedCategoryInput) {
+          selectedCategoryInput.checked = true;
+        }
+      console.log(selectedCategoryInput)
+        }
+            updateBookVisibility()
 
-        updateBookVisibility();
+        }
+        // Function to update book visibility based on the search input and filters
+        function updateBookVisibility() {
+        const query = searchInput.value.toLowerCase();
+        const showEbook = filterEbookCheckbox.checked;
+        const showHardcopy = filterHardcopyCheckbox.checked;
+        const selectedCategory = document.querySelector('#categoriesModal .form-check-input:checked')?.value;
+
+        let visibleCount = 0;
+
+        document.querySelectorAll(".card-body").forEach((card) => {
+            const title = card.querySelector(".card-content .card-title").innerText.toLowerCase();
+            const description = card.querySelector(".card-content .card-text").innerText.toLowerCase();
+            const types = card.dataset.type?.split(',') || []; // Assuming type is stored as a comma-separated string and is now an array
+            const categories = card.dataset.categories?.split(',') || []; // Assuming categories are stored as comma-separated string
+            const matchesQuery = title.includes(query) || description.includes(query);
+            const matchesType = ((showEbook && types.includes('ebook')) )||((showHardcopy && types.includes('hardcopy')) )||(!showEbook&&!showHardcopy);
+            const matchesCategory = !selectedCategory || categories.includes(selectedCategory);
+
+            if (matchesQuery && matchesType && matchesCategory) {
+                card.style.display = ""; // Show the card
+                visibleCount++;
+            } else {
+                card.style.display = "none"; // Hide the card
+            }
+        });
+        // Show or hide the "No books available" message based on visibility
+    const noBooksMessage = document.getElementById("noBooksMessage");
+    if (visibleCount === 0) {
+      noBooksMessage.style.display = "block";
+    } else {
+      noBooksMessage.style.display = "none";
     }
-    // Function to update book visibility based on the search input and filters
-    function updateBookVisibility() {
-    const query = searchInput.value.toLowerCase();
-    const showEbook = filterEbookCheckbox.checked;
-    const showHardcopy = filterHardcopyCheckbox.checked;
-    const selectedCategory = document.querySelector('#categoriesModal .form-check-input:checked')?.value;
+    }
 
-    let visibleCount = 0;
+        searchInput.addEventListener("input", updateBookVisibility);
+        filterEbookCheckbox.addEventListener("change", handleTypeSelection);
+        filterHardcopyCheckbox.addEventListener("change", handleTypeSelection);
+        applyCategoryFilterButton.addEventListener('click', function () {
+            updateBookVisibility(); // Trigger the update based on selected category
+            const categoriesModal = new bootstrap.Modal(document.getElementById('categoriesModal'));
+            categoriesModal.hide(); // Hide the modal after applying filter
+        });
+        applyClearCategoryFilterButton.addEventListener('click', function () {
+            document.querySelector('input[name="category"]:checked').checked = false;
 
-    document.querySelectorAll(".card-body").forEach((card) => {
-        const title = card.querySelector(".card-content .card-title").innerText.toLowerCase();
-        const description = card.querySelector(".card-content .card-text").innerText.toLowerCase();
-        const types = card.dataset.type?.split(',') || []; // Assuming type is stored as a comma-separated string and is now an array
-        const categories = card.dataset.categories?.split(',') || []; // Assuming categories are stored as comma-separated string
-        const matchesQuery = title.includes(query) || description.includes(query);
-        const matchesType = ((showEbook && types.includes('ebook')) )||((showHardcopy && types.includes('hardcopy')) )||(!showEbook&&!showHardcopy);
-        const matchesCategory = !selectedCategory || categories.includes(selectedCategory);
+            updateBookVisibility(); // Trigger the update based on selected category
 
-        if (matchesQuery && matchesType && matchesCategory) {
-            card.style.display = ""; // Show the card
-            visibleCount++;
-        } else {
-            card.style.display = "none"; // Hide the card
-        }
+            const categoriesModal = new bootstrap.Modal(document.getElementById('categoriesModal'));
+            categoriesModal.hide(); // Hide the modal after applying filter
+        });
+        // Initialize the visibility on page load
+        updateBookVisibility();
     });
-}
 
-    searchInput.addEventListener("input", updateBookVisibility);
-    filterEbookCheckbox.addEventListener("change", handleTypeSelection);
-    filterHardcopyCheckbox.addEventListener("change", handleTypeSelection);
-    applyCategoryFilterButton.addEventListener('click', function () {
-        updateBookVisibility(); // Trigger the update based on selected category
-        const categoriesModal = new bootstrap.Modal(document.getElementById('categoriesModal'));
-        categoriesModal.hide(); // Hide the modal after applying filter
+    </script>
+    <script>
+    document.getElementById('applyCategoryFilter').addEventListener('click', function () {
+    const selectedCategory = document.querySelector('#categoriesModal .form-check-input:checked').value;
+    
+    // Create a hidden input for the selected category
+    const form = document.querySelector('form[action="/new"]');
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'category';
+    input.value = selectedCategory;
+    form.appendChild(input);
+    
+    // Close the modal
+    const categoriesModal = new bootstrap.Modal(document.getElementById('categoriesModal'));
+    categoriesModal.hide();
     });
-    applyClearCategoryFilterButton.addEventListener('click', function () {
-        document.querySelector('input[name="category"]:checked').checked = false;
-
-        updateBookVisibility(); // Trigger the update based on selected category
-
-        const categoriesModal = new bootstrap.Modal(document.getElementById('categoriesModal'));
-        categoriesModal.hide(); // Hide the modal after applying filter
-    });
-    // Initialize the visibility on page load
-    updateBookVisibility();
-});
-
-</script>
-<script>
-document.getElementById('applyCategoryFilter').addEventListener('click', function () {
-  const selectedCategory = document.querySelector('#categoriesModal .form-check-input:checked').value;
-  
-  // Create a hidden input for the selected category
-  const form = document.querySelector('form[action="/new"]');
-  const input = document.createElement('input');
-  input.type = 'hidden';
-  input.name = 'category';
-  input.value = selectedCategory;
-  form.appendChild(input);
-  
-  // Close the modal
-  const categoriesModal = new bootstrap.Modal(document.getElementById('categoriesModal'));
-  categoriesModal.hide();
-});
 
 
-</script>
-<script>
+    </script>
+    <script>
  document.addEventListener('DOMContentLoaded', function() {
     const ebookCheckbox = document.getElementById('ebookCheckbox');
     const hardcopyCheckbox = document.getElementById('hardcopyCheckbox');
