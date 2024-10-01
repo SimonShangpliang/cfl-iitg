@@ -23,7 +23,7 @@ app.use(
     secret: "SecretKey",
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false },
+    cookie: { secure: true },
   })
 );
 app.use(express.json()); // Middleware to parse JSON request bodies
