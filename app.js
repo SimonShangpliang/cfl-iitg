@@ -44,7 +44,6 @@ app.post("/new", jwtAuth, uploadFiles.array("imagesUrl", 10), (req, res) =>
   bookController.addBook(req, res)
 );
 app.post("/addAuthor", (req, res) => {
-  console.log(123, req.body);
   authorController.addAuthor(req, res);
 });
 app.get("/getAuthor", (req, res) => authorController.getAllAuthors(req, res));
