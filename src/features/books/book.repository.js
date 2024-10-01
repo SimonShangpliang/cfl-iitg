@@ -34,7 +34,6 @@ export default class BooksRepository {
 
       // Map the result to get a list of author names
       const authorList = authors.map((author) => author.author);
-      console.log(authorList);
       return authorList;
     } catch (err) {
       return [];
@@ -53,7 +52,6 @@ export default class BooksRepository {
 
   async updateMailedStatus(bookId, requestName, mailed) {
     try {
-      console.log(bookId, requestName, mailed);
       const db = getDB();
       const collection = db.collection("books");
 
@@ -109,7 +107,6 @@ export default class BooksRepository {
 
   async updateRequestStatus(bookId, requestName, isAccepted) {
     try {
-      console.log(bookId, requestName, isAccepted);
       const db = getDB();
       const collection = db.collection("books");
 

@@ -39,7 +39,6 @@ export default class BookController {
   async getAll(req, res) {
     try {
       const books = await this.bookRepository.getAllBooks();
-      // console.log(books);
       if (!books)
         return res.status(400).render("books", {
           errMessage: "No books available",
@@ -71,7 +70,6 @@ export default class BookController {
       const booksWithUnacceptedRequests = books.filter(
         (book) => book.requests && book.requests.length > 0 //&& book.requests.some((request) => !request.isAccepted)
       );
-      console.log(booksWithUnacceptedRequests.requests);
       return booksWithUnacceptedRequests;
     } catch (err) {
       console.error(err);
@@ -226,7 +224,6 @@ export default class BookController {
       // Find the existing book
       const bookFound = await this.bookRepository.findBook(bookId);
       if (!bookFound) {
-        console.log("Book not found");
         return res.redirect("/404"); // Redirect to a 404 page or error page
       }
 
@@ -364,7 +361,6 @@ export default class BookController {
   async updateRequestBook(req, res) {
     const { bookId, requestName, isAccepted } = req.query;
     // Convert isAccepted to boolean if necessary
-    console.log(bookId, requestName, isAccepted);
     const accepted = isAccepted === "true";
 
     try {
@@ -386,13 +382,11 @@ export default class BookController {
   async issueBook(req, res) {
     const bookId = req.params.bookId;
     let book = await this.bookRepository.findBook(bookId);
-    console.log(bookId);
     if (!book) return res.status(400).redirect(req.originalUrl);
 
     const name = req.session.userName;
     const email = req.session.userEmail;
     const issuedIndex = book.requests.findIndex((r) => r.name == name);
-    console.log(name, email, issuedIndex, book);
     if (issuedIndex >= 0) {
       book.requests.splice(issuedIndex, 1);
       //  book.quantity += 1;
@@ -405,7 +399,6 @@ export default class BookController {
         requested: false,
       });
     }
-    console.log(book.quantity, book.requests.length);
 
     if (book.quantity === book.requests.length) {
       return res.render("bookDetails", {
@@ -431,7 +424,6 @@ export default class BookController {
     );
     var isAccepted = false;
     let mailed = false;
-    console.log("pushed book");
     book = await this.bookRepository.addNewRequestToBook(bookId, {
       name,
       email,

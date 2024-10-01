@@ -9,7 +9,6 @@ export default class AuthorController {
   }
 
   async addAuthor(req, res) {
-    // console.log(req.body);
     const { author, pic } = req.body; // Rename the destructured variable
     const authorRepo = this.authorRepository; // Use the class instance's repository
 

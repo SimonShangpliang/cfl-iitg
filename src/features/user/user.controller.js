@@ -38,7 +38,6 @@ export default class UserController {
         return res.render("login", { errMessage: "Incorrect credentials" });
       } else {
         // 1. Create token
-        // console.log(`result: ${JSON.stringify(result)}`);
         const token = jwt.sign(
           { userID: result._id, email: result.email, userName: result.name },
           "xyz",
@@ -55,7 +54,6 @@ export default class UserController {
         const booksRepository = new BooksRepository();
         const books = await booksRepository.getAllBooks();
         if (books) {
-          //   console.log(books);
           res.status(200).render("books", {
             errMessage: null,
             books,
