@@ -43,28 +43,26 @@ app.get("/new", jwtAuth, (req, res) => bookController.getNewBookForm(req, res));
 app.post("/new", jwtAuth, uploadFiles.array("imagesUrl", 10), (req, res) =>
   bookController.addBook(req, res)
 );
-app.post("/addAuthor", (req, res) =>{
-  console.log(123,req.body);
-  authorController.addAuthor(req, res)}
-);
-app.get("/getAuthor", (req, res) =>
-  authorController.getAllAuthors(req, res)
-);
-app.get('/', async (req, res) => {
+app.post("/addAuthor", (req, res) => {
+  console.log(123, req.body);
+  authorController.addAuthor(req, res);
+});
+app.get("/getAuthor", (req, res) => authorController.getAllAuthors(req, res));
+app.get("/", async (req, res) => {
   try {
     // Fetch all valid authors from the controller
     const authors = await authorController.getAllAuthors();
-    
+
     // Render the authorsList.ejs template with the fetched authors
-    res.render('authorsList', { authors });
+    res.render("authorsList", { authors });
   } catch (err) {
     console.error(err); // Log the error
     res.status(500).json({ error: err.message }); // Send error response
   }
 });
-app.get('/aboutUs', (req, res) => {
-  res.render('aboutUs',{
-    userEmail: req.session.userEmail
+app.get("/aboutUs", (req, res) => {
+  res.render("aboutUs", {
+    userEmail: req.session.userEmail,
   });
 });
 app.get("/bookDetails/:bookId", jwtAuth, (req, res) =>
@@ -77,22 +75,24 @@ app.get("/update-request-status", jwtAuth, (req, res) =>
   bookController.updateRequestBook(req, res)
 );
 app.get("/get-all-authors", (req, res) =>
-  
-  bookController.getUniqueAuthors(req,res)
+  bookController.getUniqueAuthors(req, res)
 );
 app.get("/updateBook/:bookId", (req, res) =>
   bookController.getUpdateBookForm(req, res)
 );
-app.post("/updateBook/:bookId", jwtAuth, uploadFiles.array("imagesUrl", 10),(req, res) =>
-  bookController.updateBook(req, res)
+app.post(
+  "/updateBook/:bookId",
+  jwtAuth,
+  uploadFiles.array("imagesUrl", 10),
+  (req, res) => bookController.updateBook(req, res)
 );
 
 app.get("/deleteBook/:bookId", (req, res) =>
   bookController.deleteBook(req, res)
 );
 // Assuming you're using Express.js
-app.delete('/deleteBook/:bookId', async (req, res) => {
-  bookController.deleteBook(req, res)
+app.delete("/deleteBook/:bookId", async (req, res) => {
+  bookController.deleteBook(req, res);
 });
 
 app.get("/books-with-unaccepted-requests", async (req, res) => {
@@ -102,14 +102,26 @@ app.get("/books-with-unaccepted-requests", async (req, res) => {
 
     // Render the EJS page with the list of books
     if (books && books.length > 0) {
-      res.status(200).render("booksWithUnacceptedRequests", { books, error: null,  userEmail: req.session.userEmail });
+      res.status(200).render("booksWithUnacceptedRequests", {
+        books,
+        error: null,
+        userEmail: req.session.userEmail,
+      });
     } else {
-      res.status(404).render("booksWithUnacceptedRequests", { books: [], error: "No books found with unaccepted requests" ,  userEmail: req.session.userEmail});
+      res.status(404).render("booksWithUnacceptedRequests", {
+        books: [],
+        error: "No books found with unaccepted requests",
+        userEmail: req.session.userEmail,
+      });
     }
   } catch (err) {
     console.error(err);
     if (!res.headersSent) {
-      res.status(500).render("booksWithUnacceptedRequests", { books: [], error: err.message,  userEmail: req.session.userEmail });
+      res.status(500).render("booksWithUnacceptedRequests", {
+        books: [],
+        error: err.message,
+        userEmail: req.session.userEmail,
+      });
     }
   }
 });
@@ -121,27 +133,52 @@ app.get("/books-requests", async (req, res) => {
 
     // Render the EJS page with the list of books
     if (books && books.length > 0) {
-      res.status(200).render("booksRequests", { books, error: null,  userEmail: req.session.userEmail });
+      res.status(200).render("booksRequests", {
+        books,
+        error: null,
+        userEmail: req.session.userEmail,
+      });
     } else {
-      res.status(404).render("booksRequests", { books: [], error: "No books found with requests" ,  userEmail: req.session.userEmail});
+      res.status(404).render("booksRequests", {
+        books: [],
+        error: "No books found with requests",
+        userEmail: req.session.userEmail,
+      });
     }
   } catch (err) {
     console.error(err);
     if (!res.headersSent) {
-      res.status(500).render("booksRequests", { books: [], error: err.message,  userEmail: req.session.userEmail });
+      res.status(500).render("booksRequests", {
+        books: [],
+        error: err.message,
+        userEmail: req.session.userEmail,
+      });
     }
   }
 });
 
-
-
 app.get("/logout", jwtAuth, (req, res) => userController.logout(req, res));
 
 const PORT = process.env.PORT || 3500;
-app.listen(PORT, () => {
-  console.log("Server is listening at port 3500");
-  connectToMongoDB();
-});
+// app.listen(PORT, () => {
+//   console.log("Server is listening at port 3500");
+//   connectToMongoDB();
+// });
 // app.use((err, req, res, next) => {
 //   if (err) console.log(err);
 // });
+
+const startServer = async () => {
+  try {
+    await connectToMongoDB(); // Ensure this completes before starting the server
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to connect to MongoDB:", error);
+    process.exit(1); // Exit the process if the connection fails
+  }
+};
+
+// Call the function to start the server
+startServer();
