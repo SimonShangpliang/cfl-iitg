@@ -42,7 +42,10 @@ app.set("trust proxy", 1);
 app.use(express.json()); // Middleware to parse JSON request bodies
 
 app.use(expressEjsLayouts);
+
 app.use((req, res, next) => {
+  console.log("Session Data:", req.session);
+  console.log("Cookies:", req.cookies);
   res.locals.userEmail = req.session.userEmail || null;
   next();
 });
