@@ -23,17 +23,22 @@ app.set("view engine", "ejs");
 app.set("views", path.join(path.resolve(), "src", "views"));
 app.use(
   session({
-    secret: "SecretKey",
+    secret: process.env.SESSION_SECRET || "SecretKey",
     resave: false,
-    saveUninitialized: true,
-    cookie: { secure: true },
+    saveUninitialized: false,
     store: MongoStore.create({
-
-      mongoUrl: process.env.MONGO_URL, // Use your MongoDB connection
+      mongoUrl: process.env.MONGO_URI, // Use your MongoDB URI
       ttl: 24 * 60 * 60, // Session expires in 1 day
     }),
+    cookie: {
+      secure: process.env.NODE_ENV === "production", // Secure only in production
+      httpOnly: true, // Prevent client-side access
+      sameSite: "strict",
+    },
   })
 );
+app.set("trust proxy", 1);
+
 app.use(express.json()); // Middleware to parse JSON request bodies
 
 app.use(expressEjsLayouts);

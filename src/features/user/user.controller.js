@@ -2,7 +2,8 @@ import BooksRepository from "../books/book.repository.js";
 import UserRepository from "./user.repository.js";
 import UserModel from "./user.model.js";
 import jwt from "jsonwebtoken";
-
+import dotenv from "dotenv";
+dotenv.config();
 export default class UserController {
   constructor() {
     this.userRepository = new UserRepository();
@@ -47,7 +48,12 @@ export default class UserController {
         // 2. send token
         res
           .status(200)
-          .cookie("jwtToken", token, { maxAge: 3600000, httpOnly: false });
+          .cookie("jwtToken", token, {
+            maxAge: 3600000,
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+          });
 
         req.session.userEmail = result.email;
         req.session.userName = result.name;
