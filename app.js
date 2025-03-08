@@ -26,9 +26,9 @@ app.use(
     secret: "SecretKey",
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false,httpOnly: true },
+    cookie: { secure: true },
     store: MongoStore.create({
-      
+
       mongoUrl: process.env.MONGO_URL, // Use your MongoDB connection
       ttl: 24 * 60 * 60, // Session expires in 1 day
     }),
