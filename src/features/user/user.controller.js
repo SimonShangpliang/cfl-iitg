@@ -53,19 +53,25 @@ export default class UserController {
         req.session.userName = result.name;
         const booksRepository = new BooksRepository();
         const books = await booksRepository.getAllBooks();
+        req.session.save((err) => {
+          if (err) {
+            console.error("Session save error:", err);
+            return res.status(500).render("login", { errMessage: "Session error" });
+          }
+       
         if (books) {
           res.status(200).render("books", {
             errMessage: null,
             books,
-            userEmail: req.session.userEmail,
+            userEmail: result.email,
           });
         } else
           res.status(200).render("books", {
             errMessage: "No books available",
             books: [],
-            userEmail: req.session.userEmail,
+            userEmail: result.email,
           });
-      }
+      })}
     } catch (err) {
       console.log(err);
       res.status(400).render("login", { errMessage: err });

@@ -1,6 +1,8 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import session from "express-session";
+import MongoStore from "connect-mongo";
+
 import expressEjsLayouts from "express-ejs-layouts";
 import path from "path";
 import jwtAuth from "./src/middlewares/jwtAuth.middleware.js";
@@ -10,7 +12,8 @@ import AuthorController from "./src/features/authors/author.controller.js";
 
 import { connectToMongoDB } from "./src/config/mongodb.js";
 import uploadFiles from "./src/middlewares/fileUpload.middleware.js";
-
+ import dotenv from "dotenv";
+ dotenv.config();
 // dotenv.config();
 const app = express();
 app.use(express.urlencoded({ extended: true }));
@@ -23,12 +26,21 @@ app.use(
     secret: "SecretKey",
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true },
+    cookie: { secure: false,httpOnly: true },
+    store: MongoStore.create({
+      
+      mongoUrl: process.env.MONGO_URL, // Use your MongoDB connection
+      ttl: 24 * 60 * 60, // Session expires in 1 day
+    }),
   })
 );
 app.use(express.json()); // Middleware to parse JSON request bodies
 
 app.use(expressEjsLayouts);
+app.use((req, res, next) => {
+  res.locals.userEmail = req.session.userEmail || null;
+  next();
+});
 
 const bookController = new BookController();
 const userController = new UserController();

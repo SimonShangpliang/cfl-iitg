@@ -1,5 +1,5 @@
-// // import dotenv from "dotenv";
-// // dotenv.config();
+ import dotenv from "dotenv";
+ dotenv.config();
 // import { MongoClient } from "mongodb";
 // import nodemailer from "nodemailer";
 // import cron from "node-cron";
