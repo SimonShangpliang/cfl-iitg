@@ -204,8 +204,12 @@
       <div class="card-body mb-2 me-2" data-type="<%= book.typeOf %>"  data-categories="<%= book.categories ? book.categories.join(',') : '' %>">
         <a href="/bookDetails/<%= book._id %>" class="btn btn-light">
           <% if (book.imagesUrl && book.imagesUrl.length > 0) { %>
-            <img id="bookImage" class="card-img" src="<%= book.imagesUrl[0] %>" alt="<%= book.name %>">
-          <% } else { %>
+            <img id="bookImage"
+            class="card-img lazy-load"
+            data-src="<%= book.imagesUrl[0] %>"
+            src="placeholder.jpg"
+            alt="<%= book.name %>">
+                 <% } else { %>
             <div class="default-image">
               <div class="title"> <b><%= book.name %></b></div>
               <div class="author"><%= book.author %></div>
@@ -252,3 +256,30 @@
     <p>No books available</p>
   <% } %>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const lazyImages = document.querySelectorAll(".lazy-load");
+
+    if ("IntersectionObserver" in window) {
+      let observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            let img = entry.target;
+            img.src = img.getAttribute("data-src");
+            img.removeAttribute("data-src");
+            observer.unobserve(img);
+          }
+        });
+      });
+
+      lazyImages.forEach(img => observer.observe(img));
+    } else {
+      // Fallback for browsers that do not support IntersectionObserver
+      lazyImages.forEach(img => {
+        img.src = img.getAttribute("data-src");
+        img.removeAttribute("data-src");
+      });
+    }
+  });
+</script>
