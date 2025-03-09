@@ -23,17 +23,23 @@ app.set("view engine", "ejs");
 app.set("views", path.join(path.resolve(), "src", "views"));
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "SecretKey",
+    secret:  "SecretKey",
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
       mongoUrl: process.env.MONGO_URL, // Use your MongoDB URI
+      collectionName: "sessions",
+
       ttl: 24 * 60 * 60, // Session expires in 1 day
+      autoRemove: "native",
+
     }),
     cookie: {
       secure: process.env.NODE_ENV === "production", // Secure only in production
       httpOnly: true, // Prevent client-side access
       sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+
     },
   })
 );
