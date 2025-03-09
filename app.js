@@ -35,11 +35,7 @@ app.use(
 
     }),
     cookie: {
-      secure: process.env.NODE_ENV === "production", // Secure only in production
-      httpOnly: true, // Prevent client-side access
-      sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
-
+      secure: false
     },
   })
 );
