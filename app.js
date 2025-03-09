@@ -23,20 +23,10 @@ app.set("view engine", "ejs");
 app.set("views", path.join(path.resolve(), "src", "views"));
 app.use(
   session({
-    secret:  "SecretKey",
+    secret: "SecretKey",
     resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URL, // Use your MongoDB URI
-      collectionName: "sessions",
-
-      ttl: 24 * 60 * 60, // Session expires in 1 day
-      autoRemove: "native",
-
-    }),
-    cookie: {
-      secure: false
-    },
+    saveUninitialized: true,
+    cookie: { secure: false },
   })
 );
 app.set("trust proxy", 1);
@@ -45,12 +35,6 @@ app.use(express.json()); // Middleware to parse JSON request bodies
 
 app.use(expressEjsLayouts);
 
-app.use((req, res, next) => {
-  console.log("Session Data:", req.session);
-  console.log("Cookies:", req.cookies);
-  res.locals.userEmail = req.session.userEmail || null;
-  next();
-});
 
 const bookController = new BookController();
 const userController = new UserController();
